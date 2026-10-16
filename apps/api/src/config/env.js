@@ -6,9 +6,11 @@ import { z } from 'zod';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load .env from root monorepo or current directory
-dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
-dotenv.config(); // fallback to local .env if present
+// Load .env from monorepo root or process cwd
+dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+dotenv.config({ path: path.resolve(process.cwd(), '../../.env') });
+dotenv.config(); // fallback to current dir
 
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
