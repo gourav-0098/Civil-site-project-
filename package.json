@@ -1,0 +1,23 @@
+{
+  "name": "nivara-infrastructure-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Enterprise Civil Construction Website & Admin CMS for Nivara Infrastructure",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n \"api,web\" -c \"blue,green\" \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "dev:api": "npm run dev --workspace=apps/api",
+    "build": "npm run build --workspace=apps/web",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "test:e2e": "npm run test:e2e --workspace=apps/web",
+    "seed:demo": "npm run seed:demo --workspace=apps/api",
+    "seed:admin": "npm run seed:admin --workspace=apps/api"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
