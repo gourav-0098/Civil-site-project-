@@ -3,23 +3,32 @@ import { env } from './env.js';
 
 let isConnected = false;
 let memServer = null;
+let cachedPromise = null;
 
 export async function connectDB(overrideUri = null) {
-  if (isConnected && mongoose.connection.readyState === 1) {
+  if (mongoose.connection.readyState === 1) {
+    isConnected = true;
     return mongoose.connection;
+  }
+
+  if (mongoose.connection.readyState === 2 && cachedPromise) {
+    return cachedPromise;
   }
 
   const uri = overrideUri || env.MONGODB_URI;
 
   try {
-    const conn = await mongoose.connect(uri, {
-      serverSelectionTimeoutMS: 5000,
-      autoIndex: true
+    cachedPromise = mongoose.connect(uri, {
+      serverSelectionTimeoutMS: 8000,
+      autoIndex: env.NODE_ENV !== 'production'
     });
+
+    const conn = await cachedPromise;
     isConnected = true;
     console.log(`✅ Connected to MongoDB: ${conn.connection.host}:${conn.connection.port}/${conn.connection.name}`);
     return conn;
   } catch (err) {
+    cachedPromise = null;
     console.warn(`⚠️ Could not connect to MongoDB at ${uri}: ${err.message}`);
 
     // If local MongoDB is unavailable during development or test, start in-memory MongoDB

@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 
-const API_INTERNAL_URL = process.env.API_INTERNAL_URL || 'http://127.0.0.1:5000';
+const API_INTERNAL_URL = process.env.API_INTERNAL_URL || (
+  process.env.NODE_ENV === 'production'
+    ? 'https://api-chi-six-63.vercel.app'
+    : 'http://127.0.0.1:5000'
+);
 
 // Explicitly permitted API prefixes
 const ALLOWED_PATH_PREFIXES = [

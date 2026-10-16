@@ -33,6 +33,7 @@ export function createApp(sessionStoreOverride = null) {
   // CORS configuration
   const allowedOrigins = [
     env.ALLOWED_ORIGIN,
+    'https://web-mu-nine-46.vercel.app',
     'http://localhost:3000',
     'http://127.0.0.1:3000'
   ];
@@ -40,8 +41,8 @@ export function createApp(sessionStoreOverride = null) {
   app.use(
     cors({
       origin: (origin, callback) => {
-        // Allow requests with no origin (mobile apps, server-side fetch, postman)
-        if (!origin || allowedOrigins.includes(origin)) {
+        // Allow requests with no origin (mobile apps, server-side fetch, postman, curl)
+        if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
           callback(null, true);
         } else {
           callback(new Error('CORS blocked: Origin not allowed'));
@@ -71,10 +72,11 @@ export function createApp(sessionStoreOverride = null) {
     secret: env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    proxy: true,
     cookie: {
       httpOnly: true,
       secure: env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     }
   };
@@ -82,25 +84,47 @@ export function createApp(sessionStoreOverride = null) {
   if (sessionStoreOverride) {
     sessionConfig.store = sessionStoreOverride;
   } else if (env.NODE_ENV !== 'test') {
-    sessionConfig.store = MongoStore.create({
-      clientPromise: mongoose.connection.asPromise().then(() => mongoose.connection.getClient()),
-      collectionName: 'sessions',
-      ttl: 7 * 24 * 60 * 60,
-      autoRemove: 'native'
-    });
+    if (env.MONGODB_URI && env.MONGODB_URI.startsWith('mongodb')) {
+      sessionConfig.store = MongoStore.create({
+        mongoUrl: env.MONGODB_URI,
+        collectionName: 'sessions',
+        ttl: 7 * 24 * 60 * 60,
+        autoRemove: 'native',
+        touchAfter: 24 * 3600
+      });
+    } else {
+      sessionConfig.store = MongoStore.create({
+        clientPromise: mongoose.connection.asPromise().then(() => mongoose.connection.getClient()),
+        collectionName: 'sessions',
+        ttl: 7 * 24 * 60 * 60,
+        autoRemove: 'native'
+      });
+    }
   }
 
   app.use(session(sessionConfig));
 
+  // Root status endpoint
+  app.get('/', (req, res) => {
+    const isDbConnected = mongoose.connection.readyState === 1;
+    res.status(200).json({
+      service: 'Nivara Infrastructure API',
+      status: 'operational',
+      database: isDbConnected ? 'connected' : 'connecting',
+      version: '1.0.0',
+      timestamp: new Date().toISOString()
+    });
+  });
+
   // Health check endpoint
   app.get('/health', (req, res) => {
     const isDbConnected = mongoose.connection.readyState === 1;
-    res.status(isDbConnected ? 200 : 503).json({
-      status: isDbConnected ? 'healthy' : 'degraded',
+    res.status(200).json({
+      status: isDbConnected ? 'healthy' : 'connecting',
       service: 'Nivara Infrastructure API',
       timestamp: new Date().toISOString(),
       uptime: Math.round(process.uptime()),
-      database: isDbConnected ? 'connected' : 'disconnected'
+      database: isDbConnected ? 'connected' : 'connecting'
     });
   });
 
