@@ -17,9 +17,14 @@ export async function connectDB(overrideUri = null) {
 
   const uri = overrideUri || env.MONGODB_URI;
 
+  if (process.env.VERCEL && (!process.env.MONGODB_URI || uri.includes('127.0.0.1'))) {
+    console.warn('⚠️ Running on Vercel but MONGODB_URI is not set in Vercel project environment variables.');
+    return null;
+  }
+
   try {
     cachedPromise = mongoose.connect(uri, {
-      serverSelectionTimeoutMS: 8000,
+      serverSelectionTimeoutMS: 6000,
       autoIndex: env.NODE_ENV !== 'production'
     });
 
@@ -30,6 +35,11 @@ export async function connectDB(overrideUri = null) {
   } catch (err) {
     cachedPromise = null;
     console.warn(`⚠️ Could not connect to MongoDB at ${uri}: ${err.message}`);
+
+    // If on Vercel, don't crash process, return null so routes can return 503
+    if (process.env.VERCEL) {
+      return null;
+    }
 
     // If local MongoDB is unavailable during development or test, start in-memory MongoDB
     if (env.NODE_ENV !== 'production') {
@@ -52,6 +62,7 @@ export async function connectDB(overrideUri = null) {
       throw err;
     }
   }
+
 }
 
 export async function disconnectDB() {

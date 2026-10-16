@@ -84,7 +84,8 @@ export function createApp(sessionStoreOverride = null) {
   if (sessionStoreOverride) {
     sessionConfig.store = sessionStoreOverride;
   } else if (env.NODE_ENV !== 'test') {
-    if (env.MONGODB_URI && env.MONGODB_URI.startsWith('mongodb')) {
+    const hasRemoteMongo = env.MONGODB_URI && env.MONGODB_URI.startsWith('mongodb') && !env.MONGODB_URI.includes('127.0.0.1');
+    if (hasRemoteMongo) {
       sessionConfig.store = MongoStore.create({
         mongoUrl: env.MONGODB_URI,
         collectionName: 'sessions',
@@ -92,7 +93,7 @@ export function createApp(sessionStoreOverride = null) {
         autoRemove: 'native',
         touchAfter: 24 * 3600
       });
-    } else {
+    } else if (!process.env.VERCEL) {
       sessionConfig.store = MongoStore.create({
         clientPromise: mongoose.connection.asPromise().then(() => mongoose.connection.getClient()),
         collectionName: 'sessions',
@@ -101,6 +102,7 @@ export function createApp(sessionStoreOverride = null) {
       });
     }
   }
+
 
   app.use(session(sessionConfig));
 
