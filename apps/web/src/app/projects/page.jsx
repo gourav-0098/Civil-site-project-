@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import { Search, Filter, RotateCcw, ChevronLeft, ChevronRight, Home, ArrowUpDown } from 'lucide-react';
+import { Search, Filter, RotateCcw, ChevronLeft, ChevronRight, Home } from 'lucide-react';
 import ProjectCard from '../../components/ProjectCard';
+import SortSelect from '../../components/SortSelect';
 import { getPublicProjects } from '../../lib/api';
 
 export const metadata = {
@@ -138,24 +139,12 @@ export default async function PropertiesPage({ searchParams }) {
               </div>
 
               {/* Price / Date Sorting */}
-              <div className="flex items-center gap-1.5 text-xs text-steel-600 font-semibold border-l border-steel-200 pl-3">
-                <ArrowUpDown className="w-3.5 h-3.5 text-steel-500" />
-                <select
-                  value={currentSort}
-                  onChange={(e) => {
-                    const newSort = e.target.value;
-                    const url = buildQuery({ sort: newSort, page: 1 });
-                    window.location.href = url;
-                  }}
-                  className="px-2 py-1 bg-white border border-steel-200 text-xs font-medium text-navy-900"
-                >
-                  <option value="">Sort: Featured First</option>
-                  <option value="price_asc">Price: Low to High</option>
-                  <option value="price_desc">Price: High to Low</option>
-                  <option value="title">Alphabetical (A-Z)</option>
-                  <option value="oldest">Oldest Listed</option>
-                </select>
-              </div>
+              <SortSelect
+                currentSort={currentSort}
+                currentCategory={currentCategory}
+                currentStatus={currentStatus}
+                currentSearch={currentSearch}
+              />
 
               {/* Reset Filters */}
               {hasActiveFilters && (

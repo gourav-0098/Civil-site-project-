@@ -18,13 +18,13 @@ export default function Error({ error, reset }) {
 
         <div className="space-y-2">
           <span className="text-xs font-mono font-bold text-rose-600 uppercase tracking-widest">
-            System Error
+            Notice
           </span>
           <h1 className="text-2xl font-bold text-navy-900 font-display">
-            Temporary Pipeline Interruption
+            Temporary Service Interruption
           </h1>
           <p className="text-steel-600 text-xs sm:text-sm leading-relaxed">
-            An unexpected error occurred during rendering. Our automated diagnostic logging has captured this event.
+            We encountered an unexpected issue while loading this page. Please try refreshing or return to the properties directory.
           </p>
         </div>
 
