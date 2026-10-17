@@ -131,10 +131,10 @@ export default function AdminProjectsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-steel-200 pb-5">
         <div>
           <span className="text-xs font-mono font-semibold text-industrial-orange uppercase tracking-wider">
-            Portfolio Management
+            Property Management
           </span>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-navy-900 font-display">
-            Project Database Records
+            Property Listings Database
           </h1>
         </div>
         <Link
@@ -142,7 +142,7 @@ export default function AdminProjectsPage() {
           className="inline-flex items-center gap-2 px-5 py-2.5 bg-industrial-orange hover:bg-industrial-orangeHover text-white text-xs font-bold uppercase tracking-wider transition-colors shadow-sm self-start sm:self-auto"
         >
           <PlusCircle className="w-4 h-4" />
-          <span>New Infrastructure Project</span>
+          <span>Add New Property</span>
         </Link>
       </div>
 
@@ -161,7 +161,7 @@ export default function AdminProjectsPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search projects..."
+            placeholder="Search properties by title, developer, location..."
             className="w-full pl-10 pr-4 py-2 border border-steel-300 text-xs text-navy-900 placeholder-steel-400 focus:outline-none focus:ring-1 focus:ring-industrial-orange"
           />
         </form>
@@ -173,11 +173,11 @@ export default function AdminProjectsPage() {
             className="px-3 py-2 border border-steel-300 bg-white text-navy-900 font-medium"
           >
             <option value="All">All Categories</option>
-            <option value="Highways & Bridges">Highways & Bridges</option>
-            <option value="Urban & Transit">Urban & Transit</option>
-            <option value="Industrial & Energy">Industrial & Energy</option>
-            <option value="Commercial Infrastructure">Commercial Infrastructure</option>
-            <option value="Water & Utilities">Water & Utilities</option>
+            <option value="Residential Flats & Apartments">Residential Flats & Apartments</option>
+            <option value="Residential Societies & Gated Communities">Residential Societies & Gated Communities</option>
+            <option value="Luxury Residences">Luxury Residences & Penthouses</option>
+            <option value="Commercial Properties">Commercial Properties</option>
+            <option value="Residential Plots">Residential Plots</option>
           </select>
 
           <select
@@ -206,15 +206,15 @@ export default function AdminProjectsPage() {
       <div className="bg-white border border-steel-200 shadow-sm overflow-x-auto">
         {loading ? (
           <div className="py-20 text-center text-xs font-mono text-steel-500">
-            Querying MongoDB Project Collection...
+            Querying Property Listings Collection...
           </div>
         ) : projects.length > 0 ? (
           <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="bg-steel-50 border-b border-steel-200 text-steel-500 font-mono uppercase text-[11px]">
-                <th className="py-3 px-4 font-semibold">Title & Category</th>
-                <th className="py-3 px-4 font-semibold">Location</th>
-                <th className="py-3 px-4 font-semibold">Construction</th>
+                <th className="py-3 px-4 font-semibold">Property & Category</th>
+                <th className="py-3 px-4 font-semibold">Location & Developer</th>
+                <th className="py-3 px-4 font-semibold">Status</th>
                 <th className="py-3 px-4 font-semibold">Publication</th>
                 <th className="py-3 px-4 font-semibold">Lifecycle</th>
                 <th className="py-3 px-4 font-semibold text-right">Actions</th>
@@ -230,13 +230,22 @@ export default function AdminProjectsPage() {
                     >
                       {proj.title}
                     </Link>
-                    <div className="text-[11px] text-steel-500 font-mono">
-                      {proj.category} {proj.isFeatured && <span className="text-industrial-orange font-bold">• Featured</span>}
+                    <div className="text-[11px] text-steel-500 font-mono flex items-center gap-1.5 flex-wrap">
+                      <span>{proj.category}</span>
+                      {proj.isFeatured && <span className="text-industrial-orange font-bold">• Featured</span>}
+                      {proj.isDemo && (
+                        <span className="text-amber-800 bg-amber-100 px-1.5 py-0.5 text-[10px] font-bold rounded">
+                          DEMO
+                        </span>
+                      )}
                     </div>
                   </td>
 
                   <td className="py-3 px-4 text-steel-700">
-                    {proj.location}
+                    <div className="font-medium">{proj.location}</div>
+                    {(proj.developerName || proj.clientName) && (
+                      <div className="text-[11px] text-steel-400">By {proj.developerName || proj.clientName}</div>
+                    )}
                   </td>
 
                   <td className="py-3 px-4">

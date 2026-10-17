@@ -7,7 +7,7 @@ import { Menu, X, ArrowRight, ShieldCheck } from 'lucide-react';
 
 const NAV_LINKS = [
   { href: '/', label: 'Home' },
-  { href: '/projects', label: 'Projects' },
+  { href: '/projects', label: 'Properties' },
   { href: '/services', label: 'Services' },
   { href: '/about', label: 'About Us' },
   { href: '/contact', label: 'Contact' }
@@ -74,7 +74,7 @@ export default function Header() {
               href="/contact"
               className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-industrial-orange hover:bg-industrial-orangeHover text-white text-sm font-semibold tracking-wide transition-all shadow-md shadow-industrial-orange/20"
             >
-              <span>Discuss a Project</span>
+              <span>Talk to Our Team</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -123,7 +123,7 @@ export default function Header() {
               onClick={() => setMobileMenuOpen(false)}
               className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-industrial-orange hover:bg-industrial-orangeHover text-white text-sm font-semibold tracking-wide shadow-md"
             >
-              <span>Discuss a Project</span>
+              <span>Talk to Our Team</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link

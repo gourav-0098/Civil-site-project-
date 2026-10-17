@@ -15,9 +15,28 @@ import {
   Image as ImageIcon,
   FileText,
   Sliders,
-  Sparkles
+  Sparkles,
+  Building,
+  Home,
+  Tag,
+  Maximize2
 } from 'lucide-react';
 import Link from 'next/link';
+
+const COMMON_AMENITIES = [
+  '24/7 Security & CCTV',
+  'Clubhouse',
+  'Swimming Pool',
+  'Equipped Gymnasium',
+  'Landscaped Gardens',
+  'Children’s Play Area',
+  '100% Power Backup',
+  'Covered Car Parking',
+  'High-Speed Elevators',
+  'Indoor Games Room',
+  'Jogging / Walking Track',
+  'EV Charging Points'
+];
 
 export default function ProjectForm({ initialData = null, isEdit = false }) {
   const router = useRouter();
@@ -27,29 +46,34 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
   const [formData, setFormData] = useState({
     title: initialData?.title || '',
     slug: initialData?.slug || '',
+    developerName: initialData?.developerName || initialData?.clientName || '',
     clientName: initialData?.clientName || '',
-    category: initialData?.category || 'Highways & Bridges',
+    category: initialData?.category || 'Residential Flats & Apartments',
     location: initialData?.location || '',
-    constructionStatus: initialData?.constructionStatus || 'Ongoing',
+    price: initialData?.price || '',
+    priceNumeric: initialData?.priceNumeric || 0,
+    configuration: initialData?.configuration || '',
+    area: initialData?.area || '',
+    amenities: initialData?.amenities || [],
+    reraId: initialData?.reraId || '',
+    possessionDate: initialData?.possessionDate || '',
+    constructionStatus: initialData?.constructionStatus || 'Under Construction',
     publicationStatus: initialData?.publicationStatus || 'Draft',
     archiveStatus: initialData?.archiveStatus || 'Active',
     isFeatured: initialData?.isFeatured || false,
+    isDemo: initialData?.isDemo || false,
     timeline: {
       startDate: initialData?.timeline?.startDate ? initialData.timeline.startDate.slice(0, 10) : '',
       estimatedCompletionDate: initialData?.timeline?.estimatedCompletionDate ? initialData.timeline.estimatedCompletionDate.slice(0, 10) : '',
       completionDate: initialData?.timeline?.completionDate ? initialData.timeline.completionDate.slice(0, 10) : ''
     },
-    shortDescription: initialData?.shortDescription || 'High-capacity heavy civil infrastructure project engineered for regional connectivity.',
-    fullDescription: initialData?.fullDescription || 'Disciplined engineering, structural modeling, geotechnical soil validation, and heavy civil construction delivery.',
-    scopeOfWork: initialData?.scopeOfWork && initialData.scopeOfWork.length > 0
-      ? initialData.scopeOfWork
-      : ['Fabrication and segmental deck span erection'],
-    specifications: initialData?.specifications && initialData.specifications.length > 0
-      ? initialData.specifications
-      : [{ label: 'Structural Concrete', value: 'M60 Grade' }],
+    shortDescription: initialData?.shortDescription || '',
+    fullDescription: initialData?.fullDescription || '',
+    scopeOfWork: initialData?.scopeOfWork || [],
+    specifications: initialData?.specifications || [],
     coverImage: {
-      url: initialData?.coverImage?.url || 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fit=crop&w=1600&q=80',
-      alt: initialData?.coverImage?.alt || 'Civil infrastructure engineering project',
+      url: initialData?.coverImage?.url || '',
+      alt: initialData?.coverImage?.alt || '',
       caption: initialData?.coverImage?.caption || '',
       publicId: initialData?.coverImage?.publicId || ''
     },
@@ -70,13 +94,14 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [newAmenityInput, setNewAmenityInput] = useState('');
 
-  // Tab definitions
+  // Tab definitions for Property Management
   const TABS = [
-    { id: 'basic', label: '1. Basic & Location' },
-    { id: 'timeline', label: '2. Status & Timeline' },
-    { id: 'content', label: '3. Scope & Details' },
-    { id: 'specs', label: '4. Specifications' },
+    { id: 'basic', label: '1. Basic & Developer' },
+    { id: 'pricing', label: '2. Pricing & Units' },
+    { id: 'content', label: '3. Overview & Highlights' },
+    { id: 'amenities_specs', label: '4. Amenities & Specs' },
     { id: 'media', label: '5. Cover & Gallery' },
     { id: 'video_seo', label: '6. Video & SEO' },
     { id: 'publish', label: '7. Publication' }
@@ -97,7 +122,27 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
     }));
   };
 
-  // Scope of work item helpers
+  // Amenities helpers
+  const toggleAmenity = (amenity) => {
+    setFormData(prev => {
+      const exists = prev.amenities.includes(amenity);
+      const updated = exists
+        ? prev.amenities.filter(a => a !== amenity)
+        : [...prev.amenities, amenity];
+      return { ...prev, amenities: updated };
+    });
+  };
+
+  const addCustomAmenity = () => {
+    if (!newAmenityInput.trim()) return;
+    const trimmed = newAmenityInput.trim();
+    if (!formData.amenities.includes(trimmed)) {
+      setFormData(prev => ({ ...prev, amenities: [...prev.amenities, trimmed] }));
+    }
+    setNewAmenityInput('');
+  };
+
+  // Highlights / Assistance items
   const handleScopeChange = (idx, val) => {
     const nextScope = [...formData.scopeOfWork];
     nextScope[idx] = val;
@@ -169,11 +214,10 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
     setError('');
 
     try {
-      // 1. Request signature from backend API
       const sigRes = await fetch('/api/proxy/admin/media/sign', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ folder: 'nivara/projects' })
+        body: JSON.stringify({ folder: 'nivara/properties' })
       });
       const sigData = await sigRes.json();
 
@@ -183,7 +227,6 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
 
       const { timestamp, signature, apiKey, cloudName, folder } = sigData.data;
 
-      // 2. Direct upload to Cloudinary API
       const uploadForm = new FormData();
       uploadForm.append('file', file);
       uploadForm.append('api_key', apiKey);
@@ -244,13 +287,24 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
       ? formData.seo.keywords.split(',').map(s => s.trim()).filter(Boolean)
       : [];
 
+    // Validation guard: If publishing, coverImage is required
+    if (formData.publicationStatus === 'Published' && !formData.coverImage.url.trim()) {
+      setError('A valid cover image is required to publish this property listing.');
+      setLoading(false);
+      setActiveTab('media');
+      return;
+    }
+
     const payload = {
       ...formData,
+      clientName: formData.developerName || formData.clientName || '',
+      developerName: formData.developerName || '',
       coverImage: {
         ...formData.coverImage,
-        url: formData.coverImage.url.trim() || 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fit=crop&w=1600&q=80',
-        alt: formData.coverImage.alt.trim() || 'Civil infrastructure engineering project'
+        url: formData.coverImage.url.trim(),
+        alt: formData.coverImage.alt.trim() || formData.title
       },
+      priceNumeric: Number(formData.priceNumeric) || 0,
       timeline: {
         startDate: formData.timeline.startDate || null,
         estimatedCompletionDate: formData.timeline.estimatedCompletionDate || null,
@@ -259,6 +313,7 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
       scopeOfWork: formData.scopeOfWork.filter(s => s && s.trim().length > 0),
       specifications: formData.specifications.filter(s => s && s.label && s.label.trim().length > 0 && s.value && s.value.trim().length > 0),
       gallery: formData.gallery.filter(item => item && item.url && item.url.trim().length > 0),
+      amenities: formData.amenities.filter(Boolean),
       seo: {
         ...formData.seo,
         keywords: keywordsArray
@@ -280,7 +335,7 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        let errorMsg = data.error || 'Failed to save project. Please check required fields.';
+        let errorMsg = data.error || 'Failed to save property. Please check required fields.';
         if (Array.isArray(data.details) && data.details.length > 0) {
           const detailStrings = data.details.map(d => `${d.field}: ${d.message}`);
           errorMsg = `Validation failed: ${detailStrings.join(' • ')}`;
@@ -288,7 +343,7 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
         throw new Error(errorMsg);
       }
 
-      setSuccess(`Project ${isEdit ? 'updated' : 'created'} successfully!`);
+      setSuccess(`Property ${isEdit ? 'updated' : 'created'} successfully!`);
       setTimeout(() => {
         router.push('/admin/projects');
       }, 1000);
@@ -315,10 +370,10 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
           </Link>
           <div>
             <span className="text-xs font-mono font-semibold text-industrial-orange uppercase tracking-wider">
-              {isEdit ? 'Update Existing Project' : 'New Project Draft'}
+              {isEdit ? 'Update Property Listing' : 'New Property Listing Draft'}
             </span>
             <h1 className="text-2xl font-bold text-navy-900 font-display">
-              {formData.title || 'Untitled Infrastructure Project'}
+              {formData.title || 'Untitled Property Listing'}
             </h1>
           </div>
         </div>
@@ -337,7 +392,7 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
             ) : (
               <>
                 <Save className="w-4 h-4" />
-                <span>Save Project</span>
+                <span>Save Property</span>
               </>
             )}
           </button>
@@ -376,17 +431,17 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
         ))}
       </div>
 
-      {/* TAB 1: BASIC INFORMATION */}
+      {/* TAB 1: BASIC INFORMATION & DEVELOPER */}
       {activeTab === 'basic' && (
         <div className="bg-white border border-steel-200 p-6 sm:p-8 space-y-6 shadow-sm">
           <h2 className="text-base font-bold text-navy-900 font-display border-b border-steel-200 pb-2">
-            1. Basic Project Identity & Geography
+            1. Property Identity & Developer Information
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="sm:col-span-2 space-y-1.5">
               <label className="block text-xs font-semibold uppercase tracking-wider text-steel-700">
-                Project Title <span className="text-rose-500">*</span>
+                Property / Project Name <span className="text-rose-500">*</span>
               </label>
               <input
                 type="text"
@@ -394,7 +449,7 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
                 required
                 value={formData.title}
                 onChange={handleTextChange}
-                placeholder="e.g. Godavari River Cable-Stayed Bridge"
+                placeholder="e.g. The Skyview Residences"
                 className="w-full px-4 py-2.5 border border-steel-300 text-sm font-semibold text-navy-900 focus:ring-1 focus:ring-industrial-orange focus:border-industrial-orange"
               />
             </div>
@@ -415,21 +470,24 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
 
             <div className="space-y-1.5">
               <label className="block text-xs font-semibold uppercase tracking-wider text-steel-700">
-                Client / Authority Name
+                Developer / Builder Name
               </label>
               <input
                 type="text"
-                name="clientName"
-                value={formData.clientName}
+                name="developerName"
+                value={formData.developerName}
                 onChange={handleTextChange}
-                placeholder="e.g. National Highway Infrastructure Authority"
+                placeholder="e.g. Horizon Luxury Estates Ltd."
                 className="w-full px-4 py-2 border border-steel-300 text-xs text-steel-900"
               />
+              <p className="text-[11px] text-steel-500">
+                Identifies the actual builder. The site displays: &ldquo;Marketed by Nivara • Developed by [Developer]&rdquo;.
+              </p>
             </div>
 
             <div className="space-y-1.5">
               <label className="block text-xs font-semibold uppercase tracking-wider text-steel-700">
-                Infrastructure Category <span className="text-rose-500">*</span>
+                Property Category / Type <span className="text-rose-500">*</span>
               </label>
               <select
                 name="category"
@@ -437,17 +495,17 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
                 onChange={handleTextChange}
                 className="w-full px-4 py-2 border border-steel-300 bg-white text-xs text-navy-900 font-medium"
               >
-                <option value="Highways & Bridges">Highways & Bridges</option>
-                <option value="Urban & Transit">Urban & Transit</option>
-                <option value="Industrial & Energy">Industrial & Energy</option>
-                <option value="Commercial Infrastructure">Commercial Infrastructure</option>
-                <option value="Water & Utilities">Water & Utilities</option>
+                <option value="Residential Flats & Apartments">Residential Flats & Apartments</option>
+                <option value="Residential Societies & Gated Communities">Residential Societies & Gated Communities</option>
+                <option value="Luxury Residences">Luxury Residences & Penthouses</option>
+                <option value="Commercial Properties">Commercial Properties & Office Suites</option>
+                <option value="Residential Plots">Residential Plots & Land</option>
               </select>
             </div>
 
             <div className="space-y-1.5">
               <label className="block text-xs font-semibold uppercase tracking-wider text-steel-700">
-                Geographic Location / State <span className="text-rose-500">*</span>
+                Geographic Location / City / Neighborhood <span className="text-rose-500">*</span>
               </label>
               <input
                 type="text"
@@ -455,25 +513,104 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
                 required
                 value={formData.location}
                 onChange={handleTextChange}
-                placeholder="e.g. Rajahmundry, Andhra Pradesh"
+                placeholder="e.g. Worli Sea Face, Mumbai"
                 className="w-full px-4 py-2 border border-steel-300 text-xs text-navy-900 font-medium"
               />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-steel-700">
+                RERA / Registration ID (Optional)
+              </label>
+              <input
+                type="text"
+                name="reraId"
+                value={formData.reraId}
+                onChange={handleTextChange}
+                placeholder="e.g. P51900024881 (Only enter if verified)"
+                className="w-full px-4 py-2 border border-steel-300 text-xs text-steel-900 font-mono"
+              />
+              <p className="text-[11px] text-steel-500">
+                Never invent a RERA number. Leave empty if unverified.
+              </p>
             </div>
           </div>
         </div>
       )}
 
-      {/* TAB 2: STATUS & TIMELINE */}
-      {activeTab === 'timeline' && (
+      {/* TAB 2: PRICING & UNITS */}
+      {activeTab === 'pricing' && (
         <div className="bg-white border border-steel-200 p-6 sm:p-8 space-y-6 shadow-sm">
           <h2 className="text-base font-bold text-navy-900 font-display border-b border-steel-200 pb-2">
-            2. Construction Lifecycle Status & Timeline
+            2. Pricing, Configuration & Construction Status
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="space-y-1.5">
               <label className="block text-xs font-semibold uppercase tracking-wider text-steel-700">
-                Construction Execution Status <span className="text-rose-500">*</span>
+                Price / Price Range (Display)
+              </label>
+              <input
+                type="text"
+                name="price"
+                value={formData.price}
+                onChange={handleTextChange}
+                placeholder="e.g. ₹95 Lakh – ₹1.65 Cr or ₹75 Lakh onwards"
+                className="w-full px-4 py-2.5 border border-steel-300 text-xs font-bold text-navy-900"
+              />
+              <p className="text-[11px] text-steel-500">
+                Customer-facing pricing text. Leave blank if Price on Request.
+              </p>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-steel-700">
+                Numeric Starting Price (for sorting)
+              </label>
+              <input
+                type="number"
+                name="priceNumeric"
+                value={formData.priceNumeric}
+                onChange={handleTextChange}
+                placeholder="e.g. 9500000"
+                className="w-full px-4 py-2.5 border border-steel-300 text-xs font-mono text-navy-900"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-steel-700">
+                Configuration / Unit Types
+              </label>
+              <input
+                type="text"
+                name="configuration"
+                value={formData.configuration}
+                onChange={handleTextChange}
+                placeholder="e.g. 2 & 3 BHK Apartments or 4 BHK Villas"
+                className="w-full px-4 py-2 border border-steel-300 text-xs text-navy-900"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-steel-700">
+                Property Area / Carpet Size
+              </label>
+              <input
+                type="text"
+                name="area"
+                value={formData.area}
+                onChange={handleTextChange}
+                placeholder="e.g. 1,280 – 1,940 sq.ft. or 30x40 sq.yd."
+                className="w-full px-4 py-2 border border-steel-300 text-xs text-navy-900 font-mono"
+              />
+              <p className="text-[11px] text-steel-500">
+                Always include the measurement unit (e.g. sq.ft., sq.yd., or acres).
+              </p>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-steel-700">
+                Availability / Construction Status <span className="text-rose-500">*</span>
               </label>
               <select
                 name="constructionStatus"
@@ -481,63 +618,42 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
                 onChange={handleTextChange}
                 className="w-full px-4 py-2.5 border border-steel-300 bg-white text-xs font-bold text-navy-900"
               >
-                <option value="Planned">Planned (Tender Stage)</option>
-                <option value="Ongoing">Ongoing (Active Construction)</option>
-                <option value="Completed">Completed (Commissioned)</option>
-                <option value="On Hold">On Hold</option>
+                <option value="Ready to Move">Ready to Move</option>
+                <option value="Under Construction">Under Construction</option>
+                <option value="Upcoming / Pre-Launch">Upcoming / Pre-Launch</option>
+                <option value="Completed">Completed</option>
+                <option value="Planned">Planned</option>
               </select>
             </div>
 
             <div className="space-y-1.5">
               <label className="block text-xs font-semibold uppercase tracking-wider text-steel-700">
-                Commencement Date
+                Possession Timeline (Text)
               </label>
               <input
-                type="date"
-                value={formData.timeline.startDate}
-                onChange={(e) => handleNestedChange('timeline', 'startDate', e.target.value)}
-                className="w-full px-4 py-2 border border-steel-300 text-xs font-mono"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-steel-700">
-                Estimated Completion Date
-              </label>
-              <input
-                type="date"
-                value={formData.timeline.estimatedCompletionDate}
-                onChange={(e) => handleNestedChange('timeline', 'estimatedCompletionDate', e.target.value)}
-                className="w-full px-4 py-2 border border-steel-300 text-xs font-mono"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-steel-700">
-                Actual Completion Date (if completed)
-              </label>
-              <input
-                type="date"
-                value={formData.timeline.completionDate}
-                onChange={(e) => handleNestedChange('timeline', 'completionDate', e.target.value)}
-                className="w-full px-4 py-2 border border-steel-300 text-xs font-mono"
+                type="text"
+                name="possessionDate"
+                value={formData.possessionDate}
+                onChange={handleTextChange}
+                placeholder="e.g. Ready to Move or December 2026"
+                className="w-full px-4 py-2 border border-steel-300 text-xs text-navy-900"
               />
             </div>
           </div>
         </div>
       )}
 
-      {/* TAB 3: DESCRIPTIONS & SCOPE */}
+      {/* TAB 3: DESCRIPTIONS & HIGHLIGHTS */}
       {activeTab === 'content' && (
         <div className="bg-white border border-steel-200 p-6 sm:p-8 space-y-6 shadow-sm">
           <h2 className="text-base font-bold text-navy-900 font-display border-b border-steel-200 pb-2">
-            3. Project Descriptions & Civil Scope
+            3. Property Marketing Descriptions & Highlights
           </h2>
 
           <div className="space-y-4">
             <div className="space-y-1.5">
               <label className="block text-xs font-semibold uppercase tracking-wider text-steel-700">
-                Executive Short Description (Max 400 characters) <span className="text-rose-500">*</span>
+                Short Marketing Summary (Card & Search results) <span className="text-rose-500">*</span>
               </label>
               <textarea
                 name="shortDescription"
@@ -546,14 +662,14 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
                 required
                 value={formData.shortDescription}
                 onChange={handleTextChange}
-                placeholder="Concise technical overview displayed on cards and search results..."
+                placeholder="Provide a concise marketing summary of the property..."
                 className="w-full px-4 py-2.5 border border-steel-300 text-xs text-navy-900"
               />
             </div>
 
             <div className="space-y-1.5">
               <label className="block text-xs font-semibold uppercase tracking-wider text-steel-700">
-                Comprehensive Engineering Overview <span className="text-rose-500">*</span>
+                Full Property Description & Neighborhood Overview <span className="text-rose-500">*</span>
               </label>
               <textarea
                 name="fullDescription"
@@ -561,16 +677,16 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
                 required
                 value={formData.fullDescription}
                 onChange={handleTextChange}
-                placeholder="In-depth narrative on geological conditions, engineering methodologies, equipment deployed..."
+                placeholder="Detailed property narrative including layout benefits, architectural finishes, connectivity, and developer background..."
                 className="w-full px-4 py-2.5 border border-steel-300 text-xs text-navy-900"
               />
             </div>
 
-            {/* Scope of Work Items */}
+            {/* Nivara Buyer Assistance Highlights */}
             <div className="pt-4 border-t border-steel-200 space-y-3">
               <div className="flex items-center justify-between">
                 <label className="block text-xs font-semibold uppercase tracking-wider text-steel-700">
-                  Key Scope Deliverables (List)
+                  Nivara Assistance Points for this Property (List)
                 </label>
                 <button
                   type="button"
@@ -578,7 +694,7 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
                   className="inline-flex items-center gap-1 text-xs text-industrial-orange font-bold hover:underline"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>Add Deliverable</span>
+                  <span>Add Point</span>
                 </button>
               </div>
 
@@ -588,7 +704,7 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
                     type="text"
                     value={item}
                     onChange={(e) => handleScopeChange(idx, e.target.value)}
-                    placeholder="e.g. Fabrication and erection of precast box girders"
+                    placeholder="e.g. Scheduled site tour with sample flat inspection"
                     className="flex-1 px-4 py-2 border border-steel-300 text-xs text-navy-900"
                   />
                   <button
@@ -605,49 +721,97 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
         </div>
       )}
 
-      {/* TAB 4: SPECIFICATIONS */}
-      {activeTab === 'specs' && (
-        <div className="bg-white border border-steel-200 p-6 sm:p-8 space-y-6 shadow-sm">
-          <div className="flex items-center justify-between border-b border-steel-200 pb-2">
-            <h2 className="text-base font-bold text-navy-900 font-display">
-              4. Technical Engineering Specifications
+      {/* TAB 4: AMENITIES & SPECIFICATIONS */}
+      {activeTab === 'amenities_specs' && (
+        <div className="bg-white border border-steel-200 p-6 sm:p-8 space-y-8 shadow-sm">
+          {/* Amenities Section */}
+          <div className="space-y-4">
+            <h2 className="text-base font-bold text-navy-900 font-display border-b border-steel-200 pb-2">
+              Property Amenities & Lifestyle Features
             </h2>
-            <button
-              type="button"
-              onClick={addSpecItem}
-              className="inline-flex items-center gap-1 text-xs text-industrial-orange font-bold hover:underline"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>Add Metric</span>
-            </button>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              {COMMON_AMENITIES.map(amenity => {
+                const isSelected = formData.amenities.includes(amenity);
+                return (
+                  <button
+                    key={amenity}
+                    type="button"
+                    onClick={() => toggleAmenity(amenity)}
+                    className={`p-2.5 text-xs text-left border transition-colors flex items-center justify-between ${
+                      isSelected
+                        ? 'bg-industrial-orange/10 border-industrial-orange text-navy-900 font-semibold'
+                        : 'bg-white border-steel-200 text-steel-600 hover:border-steel-400'
+                    }`}
+                  >
+                    <span>{amenity}</span>
+                    {isSelected && <span className="text-industrial-orange font-bold">✓</span>}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Custom Amenity Input */}
+            <div className="flex gap-2 pt-2 max-w-md">
+              <input
+                type="text"
+                value={newAmenityInput}
+                onChange={(e) => setNewAmenityInput(e.target.value)}
+                placeholder="Add custom amenity (e.g. Squash Court)"
+                className="flex-1 px-3 py-1.5 border border-steel-300 text-xs"
+              />
+              <button
+                type="button"
+                onClick={addCustomAmenity}
+                className="px-4 py-1.5 bg-navy-900 text-white text-xs font-semibold"
+              >
+                Add
+              </button>
+            </div>
           </div>
 
-          <div className="space-y-3">
-            {formData.specifications.map((spec, idx) => (
-              <div key={idx} className="grid grid-cols-1 sm:grid-cols-5 gap-3 items-center">
-                <input
-                  type="text"
-                  placeholder="Metric Label (e.g. Main Span)"
-                  value={spec.label}
-                  onChange={(e) => handleSpecChange(idx, 'label', e.target.value)}
-                  className="sm:col-span-2 px-3 py-2 border border-steel-300 text-xs font-semibold text-steel-700"
-                />
-                <input
-                  type="text"
-                  placeholder="Value (e.g. 480 meters)"
-                  value={spec.value}
-                  onChange={(e) => handleSpecChange(idx, 'value', e.target.value)}
-                  className="sm:col-span-2 px-3 py-2 border border-steel-300 text-xs font-mono text-navy-900"
-                />
-                <button
-                  type="button"
-                  onClick={() => removeSpecItem(idx)}
-                  className="p-2 text-steel-400 hover:text-rose-600 text-left sm:text-center"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            ))}
+          {/* Technical Specifications Section */}
+          <div className="space-y-4 pt-6 border-t border-steel-200">
+            <div className="flex items-center justify-between border-b border-steel-200 pb-2">
+              <h3 className="text-base font-bold text-navy-900 font-display">
+                Property Dimensions & Technical Specs
+              </h3>
+              <button
+                type="button"
+                onClick={addSpecItem}
+                className="inline-flex items-center gap-1 text-xs text-industrial-orange font-bold hover:underline"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Add Metric</span>
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              {formData.specifications.map((spec, idx) => (
+                <div key={idx} className="grid grid-cols-1 sm:grid-cols-5 gap-3 items-center">
+                  <input
+                    type="text"
+                    placeholder="Metric Label (e.g. Tower Height)"
+                    value={spec.label}
+                    onChange={(e) => handleSpecChange(idx, 'label', e.target.value)}
+                    className="sm:col-span-2 px-3 py-2 border border-steel-300 text-xs font-semibold text-steel-700"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Value (e.g. G+32 Floors)"
+                    value={spec.value}
+                    onChange={(e) => handleSpecChange(idx, 'value', e.target.value)}
+                    className="sm:col-span-2 px-3 py-2 border border-steel-300 text-xs font-mono text-navy-900"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeSpecItem(idx)}
+                    className="p-2 text-steel-400 hover:text-rose-600 text-left sm:text-center"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
@@ -658,22 +822,21 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
           {/* Cover Image Section */}
           <div className="space-y-4">
             <h2 className="text-base font-bold text-navy-900 font-display border-b border-steel-200 pb-2 flex items-center justify-between">
-              <span>Cover Image</span>
+              <span>Primary Property Cover Image</span>
               {uploading && <span className="text-xs font-mono text-industrial-orange animate-pulse">Uploading file to Cloudinary...</span>}
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5 sm:col-span-2">
                 <label className="block text-xs font-semibold uppercase tracking-wider text-steel-700">
-                  Cover Image URL <span className="text-rose-500">*</span>
+                  Cover Image URL (Direct Cloudinary Upload or Link)
                 </label>
                 <div className="flex gap-2">
                   <input
                     type="url"
-                    required
                     value={formData.coverImage.url}
                     onChange={(e) => handleNestedChange('coverImage', 'url', e.target.value)}
-                    placeholder="https://images.unsplash.com/... or uploaded Cloudinary URL"
+                    placeholder="https://images.unsplash.com/... or upload directly"
                     className="flex-1 px-4 py-2 border border-steel-300 text-xs font-mono text-navy-900"
                   />
                   <label className="px-4 py-2 bg-navy-900 text-white text-xs font-bold uppercase tracking-wider cursor-pointer hover:bg-navy-800 flex items-center gap-1.5">
@@ -697,20 +860,20 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
                   type="text"
                   value={formData.coverImage.alt}
                   onChange={(e) => handleNestedChange('coverImage', 'alt', e.target.value)}
-                  placeholder="Descriptive alt text for accessibility"
+                  placeholder="e.g. Modern residential apartment tower"
                   className="w-full px-4 py-2 border border-steel-300 text-xs"
                 />
               </div>
 
               <div className="space-y-1.5">
                 <label className="block text-xs font-semibold uppercase tracking-wider text-steel-700">
-                  Caption
+                  Caption (Optional)
                 </label>
                 <input
                   type="text"
                   value={formData.coverImage.caption}
                   onChange={(e) => handleNestedChange('coverImage', 'caption', e.target.value)}
-                  placeholder="Caption displayed under cover image"
+                  placeholder="e.g. Exterior facade view"
                   className="w-full px-4 py-2 border border-steel-300 text-xs"
                 />
               </div>
@@ -721,7 +884,7 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
           <div className="space-y-4 pt-6 border-t border-steel-200">
             <div className="flex items-center justify-between">
               <h3 className="text-base font-bold text-navy-900 font-display">
-                Additional Gallery Photographs
+                Additional Property Photographs & Floorplans
               </h3>
               <div className="flex items-center gap-3">
                 <label className="inline-flex items-center gap-1 px-3 py-1.5 bg-steel-100 border border-steel-300 hover:bg-steel-200 text-navy-900 text-xs font-bold uppercase cursor-pointer">
@@ -768,7 +931,7 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
                   />
                   <input
                     type="text"
-                    placeholder="Caption"
+                    placeholder="Caption (e.g. Master Bedroom)"
                     value={item.caption}
                     onChange={(e) => handleGalleryChange(idx, 'caption', e.target.value)}
                     className="px-3 py-1.5 border border-steel-300 text-xs"
@@ -786,7 +949,7 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
           {/* Video Integration */}
           <div className="space-y-4">
             <h2 className="text-base font-bold text-navy-900 font-display border-b border-steel-200 pb-2">
-              Video Showcase
+              Virtual Property Tour & Video
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
@@ -834,7 +997,7 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
                   type="text"
                   value={formData.seo.title}
                   onChange={(e) => handleNestedChange('seo', 'title', e.target.value)}
-                  placeholder="Leave blank to use default project title"
+                  placeholder="Leave blank to use default property title"
                   className="w-full px-4 py-2 border border-steel-300 text-xs"
                 />
               </div>
@@ -847,7 +1010,7 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
                   rows={2}
                   value={formData.seo.description}
                   onChange={(e) => handleNestedChange('seo', 'description', e.target.value)}
-                  placeholder="Custom search snippet description..."
+                  placeholder="Custom search snippet description for homebuyers..."
                   className="w-full px-4 py-2 border border-steel-300 text-xs"
                 />
               </div>
@@ -860,7 +1023,7 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
                   type="text"
                   value={formData.seo.keywords}
                   onChange={(e) => handleNestedChange('seo', 'keywords', e.target.value)}
-                  placeholder="viaduct, marine construction, bridge, civil engineering"
+                  placeholder="apartments, luxury residences, flats for sale, property"
                   className="w-full px-4 py-2 border border-steel-300 text-xs font-mono"
                 />
               </div>
@@ -942,7 +1105,7 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
                   Featured on Homepage
                 </label>
                 <p className="text-[11px] text-steel-500">
-                  Highlight this project on the corporate homepage portfolio grid.
+                  Highlight this property on the homepage featured listings grid.
                 </p>
               </div>
               <input
@@ -950,6 +1113,24 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
                 checked={formData.isFeatured}
                 onChange={(e) => setFormData(prev => ({ ...prev, isFeatured: e.target.checked }))}
                 className="w-5 h-5 accent-industrial-orange"
+              />
+            </div>
+
+            {/* Demonstration Property toggle */}
+            <div className="p-4 bg-amber-50/70 border border-amber-200 flex items-center justify-between">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-navy-900 font-mono">
+                  Demonstration / Sample Listing
+                </label>
+                <p className="text-[11px] text-steel-600">
+                  Mark this property as a demonstration listing. It will be clearly labelled to public visitors as simulated preview content.
+                </p>
+              </div>
+              <input
+                type="checkbox"
+                checked={formData.isDemo}
+                onChange={(e) => setFormData(prev => ({ ...prev, isDemo: e.target.checked }))}
+                className="w-5 h-5 accent-amber-600"
               />
             </div>
           </div>
@@ -962,7 +1143,7 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
           href="/admin/projects"
           className="text-xs font-semibold text-steel-500 hover:text-navy-900"
         >
-          Cancel and return to projects
+          Cancel and return to properties
         </Link>
         <button
           type="submit"
@@ -977,7 +1158,7 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
           ) : (
             <>
               <Save className="w-4 h-4" />
-              <span>{isEdit ? 'Update Project' : 'Publish / Save Project'}</span>
+              <span>{isEdit ? 'Update Property' : 'Publish / Save Property'}</span>
             </>
           )}
         </button>

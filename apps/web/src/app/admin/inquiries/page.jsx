@@ -222,6 +222,11 @@ export default function AdminInquiriesPage() {
                     <p className="font-semibold text-navy-900 text-xs truncate max-w-sm">
                       {inq.subject}
                     </p>
+                    {inq.propertyTitle && (
+                      <p className="text-[11px] text-industrial-orange font-medium truncate max-w-sm">
+                        Property: {inq.propertyTitle}
+                      </p>
+                    )}
                   </td>
 
                   <td className="py-3 px-4">
@@ -321,6 +326,12 @@ export default function AdminInquiriesPage() {
                   <span className="text-steel-400 uppercase font-mono text-[10px]">Target Location</span>
                   <p className="font-semibold text-navy-900">{selectedInquiry.projectLocation || 'General'}</p>
                 </div>
+                {selectedInquiry.propertyTitle && (
+                  <div className="space-y-1 col-span-2">
+                    <span className="text-steel-400 uppercase font-mono text-[10px]">Associated Property</span>
+                    <p className="font-bold text-industrial-orange">{selectedInquiry.propertyTitle}</p>
+                  </div>
+                )}
               </div>
 
               {/* Message Narrative */}

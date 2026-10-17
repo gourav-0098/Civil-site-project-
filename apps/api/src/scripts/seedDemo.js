@@ -2,63 +2,80 @@ import { connectDB, disconnectDB } from '../config/db.js';
 import { Project } from '../models/Project.js';
 import { User } from '../models/User.js';
 
-const DEMO_PROJECTS = [
+const DEMO_PROPERTIES = [
   {
-    title: 'Western Coastal Elevated Viaduct',
-    slug: 'western-coastal-elevated-viaduct',
-    category: 'Highways & Bridges',
-    location: 'Mumbai-Goa Coastal Corridor, Maharashtra',
-    clientName: 'State Road Development Corporation (Demonstration)',
-    constructionStatus: 'Ongoing',
+    title: 'The Skyview Residences',
+    slug: 'the-skyview-residences',
+    category: 'Residential Flats & Apartments',
+    location: 'Worli Sea Face, South Mumbai, Maharashtra',
+    developerName: 'Horizon Luxury Estates Ltd.',
+    clientName: 'Horizon Luxury Estates Ltd.',
+    price: '₹3.85 Cr – ₹7.20 Cr',
+    priceNumeric: 38500000,
+    configuration: '3 & 4 BHK Sea-Facing Residences',
+    area: '2,150 – 3,800 sq.ft.',
+    possessionDate: 'Ready to Move',
+    reraId: '',
+    isDemo: true,
+    constructionStatus: 'Ready to Move',
     publicationStatus: 'Published',
     archiveStatus: 'Active',
     isFeatured: true,
+    amenities: [
+      'Infinity Lap Pool',
+      'Sky Lounge & Observatory',
+      'State-of-the-Art Fitness Center',
+      '24/7 Multi-Tier Concierge & Security',
+      'Automated Multi-Level Covered Parking',
+      'High-Speed Private Elevators',
+      'Landscaped Zen Garden'
+    ],
     timeline: {
-      startDate: new Date('2023-03-15'),
-      estimatedCompletionDate: new Date('2027-11-30')
+      startDate: new Date('2020-03-01'),
+      completionDate: new Date('2024-06-30')
     },
-    shortDescription: 'A 24.8-kilometer eight-lane elevated marine expressway viaduct engineered with pre-stressed segmental concrete box girders to bypass high-density coastal settlements.',
-    fullDescription: 'The Western Coastal Elevated Viaduct represents a landmark demonstration in maritime civil engineering and high-capacity traffic management. Constructed across tidal inlets and sensitive coastal estuaries, this corridor incorporates seismic-resistant deep pile foundations drilled up to 45 meters into seabed bedrock.\n\nEmploying twin self-launching gantry systems, the engineering plan minimizes ground footprint while delivering exceptional structural durability designed for a 120-year operational design life against saline corrosion.',
+    shortDescription: 'Exclusive sea-facing high-rise apartments offering panoramic views of the Arabian Sea, private lift access, and world-class luxury amenities. Marketed exclusively by Nivara Infrastructure.',
+    fullDescription: 'The Skyview Residences represents the pinnacle of contemporary coastal living in South Mumbai. Developed by Horizon Luxury Estates and marketed by Nivara Infrastructure, this development offers discerning homebuyers ultra-spacious 3 and 4-bedroom residences designed for privacy, natural cross-ventilation, and expansive sea vistas.\n\nEach residence is finished with Italian marble flooring, floor-to-ceiling soundproof acoustic double glazing, modular European kitchens, and pre-integrated smart automation systems. Residents enjoy access to a 20,000 sq.ft. private clubhouse, an elevated infinity pool overlooking the coastline, and dedicated concierge hospitality services.\n\n*Listing Disclaimer: Marketed by Nivara Infrastructure. Developed and constructed by Horizon Luxury Estates Ltd. All specifications, floor plans, and pricing are subject to verification upon inquiry.*',
     scopeOfWork: [
-      'Fabrication and erection of 1,840 precast prestressed segmental box girders',
-      'Installation of 45-meter-deep marine monopile foundations under tidal conditions',
-      'Integration of continuous automated structural health monitoring (SHM) fiber sensors',
-      'Advanced coastal erosion barriers and hydrodynamic scour protection buffers'
+      'Private viewing and priority site tour coordination',
+      'Detailed unit floor-plan and architectural layout consultation',
+      'Direct developer sales negotiation and transaction facilitation',
+      'End-to-end documentation, banking loan assistance, and registry support'
     ],
     specifications: [
-      { label: 'Total Viaduct Length', value: '24.8 km' },
-      { label: 'Carriageway Configuration', value: 'Dual 4-Lane + Emergency Shoulders' },
-      { label: 'Structural Concrete Volume', value: '420,000 m³ (M60 High-Performance Grade)' },
-      { label: 'Reinforcement Steel', value: '98,000 Metric Tonnes' },
-      { label: 'Design Speed', value: '100 km/h' },
-      { label: 'Environmental Classification', value: 'Severe Marine Exposure (BS 8500-1)' }
+      { label: 'Tower Configuration', value: 'Ground + 42 Residential Floors' },
+      { label: 'Available Unit Types', value: '3 BHK, 4 BHK & Duplex Penthouses' },
+      { label: 'Carpet Area Range', value: '2,150 – 3,800 sq.ft.' },
+      { label: 'Ceiling Clear Height', value: '11.5 Feet Floor-to-Ceiling' },
+      { label: 'Parking Allocation', value: '2 to 3 Covered Bays per Unit' },
+      { label: 'Possession Status', value: 'Ready to Move (Occupancy Certificate Issued)' }
     ],
     coverImage: {
-      url: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fit=crop&w=1600&q=80',
-      publicId: 'demo_viaduct_cover',
-      alt: 'Elevated highway viaduct concrete construction at sunset',
-      caption: 'Mainline viaduct segmental span erection over coastal tidal inlet.'
+      url: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1600&q=80',
+      publicId: 'demo_skyview_cover',
+      alt: 'Luxury modern residential apartment tower',
+      caption: 'The Skyview Residences — Architectural facade overlooking coastal bay.'
     },
     gallery: [
       {
-        url: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1200&q=80',
-        publicId: 'demo_viaduct_1',
-        alt: 'Heavy civil construction cranes working on piers',
-        caption: 'Heavy pier-cap reinforcement and hydraulic formwork positioning.',
+        url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
+        publicId: 'demo_skyview_1',
+        alt: 'Modern luxury living room interior with large windows',
+        caption: 'Expansive open-plan living room with natural daylight and ocean vistas.',
         order: 1
       },
       {
-        url: 'https://images.unsplash.com/photo-1590486803833-1c5dc8ddd4c8?auto=format&fit=crop&w=1200&q=80',
-        publicId: 'demo_viaduct_2',
-        alt: 'High-altitude construction view of bridge deck',
-        caption: 'Segmental box girder deck alignment prior to post-tensioning.',
+        url: 'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=1200&q=80',
+        publicId: 'demo_skyview_2',
+        alt: 'Modern designer kitchen with island',
+        caption: 'Fully-fitted European modular kitchen with integrated appliances.',
         order: 2
       },
       {
-        url: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=1200&q=80',
-        publicId: 'demo_viaduct_3',
-        alt: 'Civil engineers inspecting bridge structure',
-        caption: 'Quality control engineers verifying rebar clearances and duct alignment.',
+        url: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80',
+        publicId: 'demo_skyview_3',
+        alt: 'Infinity swimming pool with city view',
+        caption: 'Rooftop infinity swimming pool and resident lounge.',
         order: 3
       }
     ],
@@ -69,124 +86,77 @@ const DEMO_PROJECTS = [
       publicId: 'ScMzIvxBSi4'
     },
     seo: {
-      title: 'Western Coastal Elevated Viaduct | Nivara Infrastructure',
-      description: 'Explore the Western Coastal Elevated Viaduct demonstration project: 24.8 km marine viaduct engineered with precast segmental technology.',
-      keywords: ['viaduct', 'marine engineering', 'elevated highway', 'civil construction', 'bridge']
+      title: 'The Skyview Residences | Luxury Apartments in Worli | Nivara Infrastructure',
+      description: 'Explore 3 & 4 BHK sea-facing luxury apartments at The Skyview Residences, Worli. Marketed by Nivara Infrastructure.',
+      keywords: ['luxury flats', 'Worli sea face', 'residential apartments', 'Mumbai property', 'Nivara Infrastructure']
     }
   },
   {
-    title: 'Godavari River Cable-Stayed Bridge',
-    slug: 'godavari-river-cable-stayed-bridge',
-    category: 'Highways & Bridges',
-    location: 'Rajahmundry Regional Bypass, Andhra Pradesh',
-    clientName: 'National Highway Infrastructure Authority (Demonstration)',
-    constructionStatus: 'Completed',
+    title: 'Palm Meadows Gated Community',
+    slug: 'palm-meadows-gated-community',
+    category: 'Residential Societies & Gated Communities',
+    location: 'Whitefield - Sarjapur Link Road, Bengaluru, Karnataka',
+    developerName: 'Sterling Greenfield Developers Pvt. Ltd.',
+    clientName: 'Sterling Greenfield Developers Pvt. Ltd.',
+    price: '₹1.85 Cr – ₹3.40 Cr',
+    priceNumeric: 18500000,
+    configuration: '3 & 4 BHK Luxury Villas & Townhomes',
+    area: '2,600 – 4,100 sq.ft.',
+    possessionDate: 'December 2025',
+    reraId: '',
+    isDemo: true,
+    constructionStatus: 'Under Construction',
     publicationStatus: 'Published',
     archiveStatus: 'Active',
     isFeatured: true,
+    amenities: [
+      'Private Clubhouse (35,000 sq.ft.)',
+      'Tennis & Badminton Courts',
+      'Dedicated Jogging & Cycling Tracks',
+      'Solar Power Infrastructure',
+      'Children’s Interactive Play Park',
+      'Rainwater Harvesting & Lakefront Deck',
+      'Round-the-Clock Perimeter Security'
+    ],
     timeline: {
-      startDate: new Date('2020-01-10'),
-      completionDate: new Date('2024-08-15')
+      startDate: new Date('2022-09-15'),
+      estimatedCompletionDate: new Date('2025-12-31')
     },
-    shortDescription: 'A signature 4.2-kilometer cable-stayed river crossing featuring twin 145-meter inverted-Y concrete pylons and aerodynamic steel-concrete composite deck.',
-    fullDescription: 'The Godavari River Cable-Stayed Bridge is an architectural and structural engineering showpiece designed to bridge a dynamic, flood-prone river basin. With a primary navigational span of 480 meters, the structure allows uninterrupted inland river navigation during high monsoonal discharge.\n\nThe bridge incorporates 112 high-tensile parallel strand stay cables equipped with internal damping rings to counteract wind-induced and rain-vortex vibrations.',
+    shortDescription: 'An idyllic 45-acre master-planned gated enclave featuring independent luxury villas, private garden courtyards, and over 70% open green landscapes in Bengaluru’s tech corridor.',
+    fullDescription: 'Palm Meadows Gated Community is an eco-sensitive residential society tailored for families seeking space, calm, and community in east Bengaluru. Developed by Sterling Greenfield Developers and represented for marketing by Nivara Infrastructure, the township includes 180 bespoke triplex villas bordered by landscaped avenues and tree-lined walkways.\n\nEach villa features double-height foyer spaces, private rooftop terrace entertainment decks, domestic helper quarters, and dual covered car porches. The community is pre-certified IGBC Green Gold with decentralized organic waste converters and high-efficiency water treatment systems.\n\n*Listing Disclaimer: Marketed by Nivara Infrastructure. The property is engineered and developed by Sterling Greenfield Developers Pvt. Ltd. Contact our advisory team for stage-wise construction inspection schedules.*',
     scopeOfWork: [
-      'Twin 145-meter high-performance slipform concrete pylons in deep alluvial subsoil',
-      'Fabrication and installation of 480-meter orthotropic aerodynamic composite deck',
-      '112 stay-cable stay installation with multi-layer corrosion wax and HDPE sheathing',
-      'Dynamic wind-tunnel testing and real-time seismic isolation bearings'
+      'Comprehensive community master plan and villa orientation walkthroughs',
+      'Buyer pre-qualification and allotment assistance',
+      'Coordination of personalized interior modification packages with developer',
+      'Construction milestone updates and escrow account payment advisories'
     ],
     specifications: [
-      { label: 'Overall River Crossing Length', value: '4.2 km (Bridge + Approaches)' },
-      { label: 'Main Navigational Span', value: '480 meters' },
-      { label: 'Pylon Height Above Foundation', value: '145 meters' },
-      { label: 'Stay Cable Tensile Strength', value: '1,860 MPa High-Grade Steel' },
-      { label: 'Navigational Clear Headroom', value: '26 meters at High Flood Level' },
-      { label: 'Foundation Type', value: '24m Diameter Well Caisson Foundations' }
+      { label: 'Total Enclave Area', value: '45 Acres Master Planned' },
+      { label: 'Total Villa Inventory', value: '180 Independent Homes' },
+      { label: 'Green Open Space Ratio', value: '72% Landscaped Open Area' },
+      { label: 'Villa Structure', value: 'Ground + 2 Floors + Private Terrace' },
+      { label: 'Power Backup', value: '100% DG Back-up for Homes and Common Areas' },
+      { label: 'Handover Phase', value: 'Phase 1: June 2025 | Phase 2: Dec 2025' }
     ],
     coverImage: {
-      url: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1600&q=80',
-      publicId: 'demo_bridge_cover',
-      alt: 'Spectacular cable stayed bridge crossing wide river',
-      caption: 'Completed main cable-stayed span crossing the river basin.'
+      url: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1600&q=80',
+      publicId: 'demo_palm_cover',
+      alt: 'Luxury modern villa in gated residential society',
+      caption: 'Palm Meadows — Elegant independent villas immersed in green tranquility.'
     },
     gallery: [
       {
-        url: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fit=crop&w=1200&q=80',
-        publicId: 'demo_bridge_1',
-        alt: 'Cable stays anchored into the tower',
-        caption: 'High-tensile stay cables radiating from the upper pylon saddle.',
+        url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
+        publicId: 'demo_palm_1',
+        alt: 'Contemporary villa exterior with manicured lawn',
+        caption: 'Bespoke contemporary facade with landscaped private lawn.',
         order: 1
       },
       {
-        url: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80',
-        publicId: 'demo_bridge_2',
-        alt: 'Tower structure rising into the sky',
-        caption: 'Pylon slipform casting progress reached at 120m height mark.',
-        order: 2
-      }
-    ],
-    video: {
-      provider: 'youtube',
-      url: 'https://www.youtube.com/watch?v=ScMzIvxBSi4',
-      embedUrl: 'https://www.youtube-nocookie.com/embed/ScMzIvxBSi4',
-      publicId: 'ScMzIvxBSi4'
-    },
-    seo: {
-      title: 'Godavari River Cable-Stayed Bridge | Nivara Infrastructure',
-      description: 'Explore the 4.2 km signature cable-stayed bridge demonstration project crossing the Godavari basin with a 480m main span.',
-      keywords: ['cable-stayed bridge', 'pylons', 'infrastructure', 'civil engineering']
-    }
-  },
-  {
-    title: 'Deccan Regional Transit Corridor',
-    slug: 'deccan-regional-transit-corridor',
-    category: 'Urban & Transit',
-    location: 'Bengaluru Outer Metropolitan Belt, Karnataka',
-    clientName: 'Metropolitan Rapid Transit Corporation (Demonstration)',
-    constructionStatus: 'Ongoing',
-    publicationStatus: 'Published',
-    archiveStatus: 'Active',
-    isFeatured: true,
-    timeline: {
-      startDate: new Date('2022-07-01'),
-      estimatedCompletionDate: new Date('2026-12-15')
-    },
-    shortDescription: 'A 32-kilometer grade-separated regional semi-high-speed transit line featuring 8 elevated multi-modal stations and dedicated depot facilities.',
-    fullDescription: 'The Deccan Regional Transit Corridor is designed to relieve urban congestion across high-growth technological and manufacturing hubs. Built within narrow right-of-way boundaries along existing expressway medians, the project utilizes portal beam substructures and precast U-girders for rapid nighttime erection.\n\nThe project incorporates green station architecture with integrated solar canopies, rainwater harvesting viaduct drain systems, and full universal accessibility standards.',
-    scopeOfWork: [
-      '32 km twin-track elevated viaduct utilizing monolithic precast U-girders',
-      'Turnkey construction of 8 architecturally distinctive elevated transit stations',
-      'Integration of third-rail power supply distribution and track ballastless plinth',
-      'Maintenance depot construction including heavy workshop and stabling yards'
-    ],
-    specifications: [
-      { label: 'Corridor Alignment Length', value: '32.4 km Elevated' },
-      { label: 'Passenger Design Capacity', value: '45,000 PPHPD' },
-      { label: 'Operating Speed Limit', value: '120 km/h' },
-      { label: 'Track Gauge', value: '1,435 mm Standard Gauge' },
-      { label: 'Number of Stations', value: '8 Elevated Multi-Modal Hubs' },
-      { label: 'Power Traction', value: '750V DC Third Rail Bottom-Contact' }
-    ],
-    coverImage: {
-      url: 'https://images.unsplash.com/photo-1590069261209-f8e9b8642343?auto=format&fit=crop&w=1600&q=80',
-      publicId: 'demo_transit_cover',
-      alt: 'Modern transit viaduct track in urban landscape',
-      caption: 'Elevated transit track structure passing through metropolitan corridor.'
-    },
-    gallery: [
-      {
-        url: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80',
-        publicId: 'demo_transit_1',
-        alt: 'Station steel roof construction',
-        caption: 'Station canopy structural steel truss hoisting and bolt torquing.',
-        order: 1
-      },
-      {
-        url: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1200&q=80',
-        publicId: 'demo_transit_2',
-        alt: 'Concrete track bed construction',
-        caption: 'Continuous ballastless plinth concrete pouring and laser leveling.',
+        url: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=80',
+        publicId: 'demo_palm_2',
+        alt: 'Open-concept villa dining and living area',
+        caption: 'Double-height living space flowing smoothly onto the private patio.',
         order: 2
       }
     ],
@@ -197,59 +167,77 @@ const DEMO_PROJECTS = [
       publicId: ''
     },
     seo: {
-      title: 'Deccan Regional Transit Corridor | Nivara Infrastructure',
-      description: 'Discover the Deccan Regional Transit Corridor: 32 km elevated semi-high-speed rail project with 8 stations and advanced civil works.',
-      keywords: ['urban transit', 'metro viaduct', 'civil rail infrastructure', 'transit corridor']
+      title: 'Palm Meadows Gated Community | Luxury Villas in Bengaluru | Nivara Infrastructure',
+      description: 'Discover independent luxury villas at Palm Meadows, Whitefield-Sarjapur corridor. Marketed by Nivara Infrastructure.',
+      keywords: ['gated community', 'villas in Bangalore', 'luxury housing', 'property sales', 'Nivara Infrastructure']
     }
   },
   {
-    title: 'Kutch Renewable Energy Infrastructure',
-    slug: 'kutch-renewable-energy-infrastructure',
-    category: 'Industrial & Energy',
-    location: 'Rann of Kutch Energy Zone, Gujarat',
-    clientName: 'Clean Power Transmission Grid Ltd. (Demonstration)',
-    constructionStatus: 'Completed',
+    title: 'Aura Grand Urban Apartments',
+    slug: 'aura-grand-urban-apartments',
+    category: 'Residential Flats & Apartments',
+    location: 'Banjara Hills Extension, Hyderabad, Telangana',
+    developerName: 'Aura Urban Living Projects LLP',
+    clientName: 'Aura Urban Living Projects LLP',
+    price: '₹95 Lakh – ₹1.65 Cr',
+    priceNumeric: 9500000,
+    configuration: '2 & 3 BHK Contemporary Flats',
+    area: '1,280 – 1,940 sq.ft.',
+    possessionDate: 'Ready to Move',
+    reraId: '',
+    isDemo: true,
+    constructionStatus: 'Ready to Move',
     publicationStatus: 'Published',
     archiveStatus: 'Active',
     isFeatured: true,
+    amenities: [
+      'Rooftop Swimming Pool',
+      'Multipurpose Community Hall',
+      'Equipped Gymnasium & Yoga Studio',
+      'High-Speed Elevators with Power Backup',
+      'EV Charging Stations in Basement',
+      '24/7 Security with CCTV Surveillance',
+      'Landscaped Terrace Seating'
+    ],
     timeline: {
-      startDate: new Date('2021-04-10'),
-      completionDate: new Date('2023-10-20')
+      startDate: new Date('2021-06-01'),
+      completionDate: new Date('2024-03-31')
     },
-    shortDescription: 'Comprehensive civil and foundation engineering for a 1.2 GW hybrid wind-solar installation across challenging saline mudflat terrain.',
-    fullDescription: 'Constructing utility-scale renewable power across coastal mudflats requires specialized geotechnical remediation. The Kutch Renewable Energy Infrastructure project overcame extreme seasonal waterlogging and corrosive soil chemistry through stone column ground improvement and sulfate-resistant concrete foundations.\n\nThe project delivered 280 heavy wind turbine gravity foundations and over 40 square kilometers of solar racking foundations, alongside high-voltage substation switchyards and heavy-duty access haul roads.',
+    shortDescription: 'Ready-to-move 2 and 3 BHK apartments situated in Hyderabad’s prime cultural and commercial neighborhood, offering intelligent floor plans and swift connectivity.',
+    fullDescription: 'Aura Grand Urban Apartments delivers contemporary metropolitan living designed for professionals and families. Constructed by Aura Urban Living Projects and marketed through Nivara Infrastructure, the development blends urban accessibility with modern conveniences.\n\nUnits are designed according to Vastu principles with unhindered ventilation, anti-skid premium vitrified flooring, and designer sanitaryware. The community is conveniently located within minutes of IT corridors, leading healthcare centers, and renowned schools.\n\n*Listing Disclaimer: Marketed by Nivara Infrastructure. Constructed and delivered by Aura Urban Living Projects LLP. Please verify ready unit availability and current registry procedures with our sales advisors.*',
     scopeOfWork: [
-      'Geotechnical ground improvement across 4,200 hectares of saline mudflats',
-      'Construction of 280 heavy gravity wind turbine foundations (up to 4.2 MW class)',
-      'Erection of 765 kV Extra High Voltage (EHV) substation civil structures',
-      '140 km of compacted all-weather heavy transport access roadways'
+      'Ready-to-move flat inspection and inventory reservation',
+      'Comparative pricing and market rental yield analysis for investors',
+      'Bank home loan pre-approvals and documentation advisory',
+      'Direct coordination with developer for key handover and title transfer'
     ],
     specifications: [
-      { label: 'Installed Energy Capacity', value: '1,200 MW Hybrid (Wind & Solar)' },
-      { label: 'Wind Turbine Foundations', value: '280 Units (C35/45 SR Cement)' },
-      { label: 'Ground Improvement Area', value: '42,000,000 m² (Stone Columns)' },
-      { label: 'Substation Voltage Class', value: '765 kV / 400 kV GIS Substation' },
-      { label: 'Haul Road Network', value: '142 km Heavy-Duty Compacted Aggregate' }
+      { label: 'Project Density', value: '140 Premium Residences' },
+      { label: 'Apartment Configurations', value: '2 BHK (1,280 sq.ft.) & 3 BHK (1,940 sq.ft.)' },
+      { label: 'Flooring', value: 'High-Gloss Glazed Vitrified Tiles (800x1600mm)' },
+      { label: 'Elevators', value: '3 High-Speed Passenger Elevators + 1 Service Lift' },
+      { label: 'Water Supply', value: 'Continuous Municipal Supply + Dual Borewell Backup' },
+      { label: 'Occupancy Status', value: 'Ready to Move with Full Clearance' }
     ],
     coverImage: {
-      url: 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?auto=format&fit=crop&w=1600&q=80',
-      publicId: 'demo_energy_cover',
-      alt: 'Vast wind turbines and solar installation on horizon',
-      caption: 'Hybrid wind turbine array foundations across coastal energy zone.'
+      url: 'https://images.unsplash.com/photo-1567496898669-ee935f5f647a?auto=format&fit=crop&w=1600&q=80',
+      publicId: 'demo_aura_cover',
+      alt: 'Modern residential apartment building exterior',
+      caption: 'Aura Grand — Premium 2 & 3 BHK apartments in prime Hyderabad.'
     },
     gallery: [
       {
-        url: 'https://images.unsplash.com/photo-1519999482648-25049ddd37b1?auto=format&fit=crop&w=1200&q=80',
-        publicId: 'demo_energy_1',
-        alt: 'Solar energy field installation',
-        caption: 'Driven steel pile foundations for solar tracking arrays.',
+        url: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80',
+        publicId: 'demo_aura_1',
+        alt: 'Warm contemporary apartment interior',
+        caption: 'Thoughtfully planned living space with natural ventilation.',
         order: 1
       },
       {
-        url: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80',
-        publicId: 'demo_energy_2',
-        alt: 'Heavy industrial civil works',
-        caption: 'High-voltage transformer foundation pad pouring and cable trenching.',
+        url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1200&q=80',
+        publicId: 'demo_aura_2',
+        alt: 'Modern master bedroom with wooden flooring',
+        caption: 'Comfortable master bedroom with laminated wood flooring.',
         order: 2
       }
     ],
@@ -260,53 +248,151 @@ const DEMO_PROJECTS = [
       publicId: ''
     },
     seo: {
-      title: 'Kutch Renewable Energy Infrastructure | Nivara Infrastructure',
-      description: 'Review the Kutch Renewable Energy project: 1.2 GW civil foundation engineering across challenging coastal terrain.',
-      keywords: ['renewable energy', 'wind turbine foundation', 'geotechnical engineering', 'solar farm civil']
+      title: 'Aura Grand Urban Apartments | Ready 2 & 3 BHK | Nivara Infrastructure',
+      description: 'Inspect ready-to-move 2 & 3 BHK flats at Aura Grand, Banjara Hills Extension. Marketed by Nivara Infrastructure.',
+      keywords: ['ready to move flats', 'Hyderabad apartments', 'Banjara Hills property', '2 BHK', '3 BHK']
     }
   },
   {
-    title: 'Sonipat Logistics and Freight Terminal',
-    slug: 'sonipat-logistics-and-freight-terminal',
-    category: 'Commercial Infrastructure',
-    location: 'Delhi-NCR Western Dedicated Freight Belt, Haryana',
-    clientName: 'Intermodal Logistics Logistics Hub Corp (Demonstration)',
-    constructionStatus: 'Ongoing',
+    title: 'The Pinnacle Commercial Business Suites',
+    slug: 'the-pinnacle-commercial-business-suites',
+    category: 'Commercial Properties',
+    location: 'Cyber City Sector 29, Gurugram, NCR',
+    developerName: 'Pinnacle Corporate Infrastructures Ltd.',
+    clientName: 'Pinnacle Corporate Infrastructures Ltd.',
+    price: '₹1.10 Cr – ₹6.50 Cr',
+    priceNumeric: 11000000,
+    configuration: 'Grade-A Office Suites & Retail Spaces',
+    area: '850 – 5,200 sq.ft.',
+    possessionDate: 'March 2026',
+    reraId: '',
+    isDemo: true,
+    constructionStatus: 'Under Construction',
+    publicationStatus: 'Published',
+    archiveStatus: 'Active',
+    isFeatured: true,
+    amenities: [
+      'Double-Height Grand Corporate Atrium',
+      'LEED Platinum Pre-Certified Building',
+      'Central Chilled-Water Air Conditioning',
+      '100% Uninterrupted Power Back-Up (N+1)',
+      'High-Speed Destination-Controlled Lifts',
+      'Food Court, Cafes & Business Lounges',
+      'Advanced 3-Tier Fire Suppression & Security'
+    ],
+    timeline: {
+      startDate: new Date('2023-01-10'),
+      estimatedCompletionDate: new Date('2026-03-31')
+    },
+    shortDescription: 'Grade-A corporate office suites and high-street retail showrooms engineered for IT corporations, financial firms, and boutique practices in Gurugram’s commercial core.',
+    fullDescription: 'The Pinnacle is a flagship commercial development designed to meet the rigorous operational standards of international enterprises and expanding businesses. Marketed on behalf of Pinnacle Corporate Infrastructures by Nivara Infrastructure, the complex provides flexible floor plates that can accommodate boutique 850 sq.ft. suites or contiguous whole-floor headquarters up to 28,000 sq.ft.\n\nThe tower incorporates energy-efficient double-glazed Low-E facade glazing, advanced indoor air purification with MERV-13 filtration, and touchless destination dispatch elevators.\n\n*Listing Disclaimer: Marketed by Nivara Infrastructure. Developed by Pinnacle Corporate Infrastructures Ltd. Commercial leasing and purchase terms are subject to standard developer agreements.*',
+    scopeOfWork: [
+      'Commercial space requirement mapping and floor plate feasibility analysis',
+      'Investor ROI assessment, projected rental yields, and capital appreciation models',
+      'Direct developer commercial lease-to-buy negotiation',
+      'Legal verification and corporate transfer transaction support'
+    ],
+    specifications: [
+      { label: 'Building Classification', value: 'Grade-A Corporate Tower (LEED Platinum)' },
+      { label: 'Total Built-up Area', value: '450,000 sq. ft. Commercial & Retail' },
+      { label: 'Floor-to-Floor Height', value: '4.2 Meters Commercial Clear Height' },
+      { label: 'Power Backup', value: '100% Redundant Diesel Generator Capacity' },
+      { label: 'Car Parking Capacity', value: 'Over 800 Basement Stalls + Valet Service' },
+      { label: 'Handover Condition', value: 'Bare-Shell & Warm-Shell Options Available' }
+    ],
+    coverImage: {
+      url: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=80',
+      publicId: 'demo_pinnacle_cover',
+      alt: 'Glass modern corporate office building skyscraper',
+      caption: 'The Pinnacle — Iconic Grade-A commercial architecture in Cyber City.'
+    },
+    gallery: [
+      {
+        url: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80',
+        publicId: 'demo_pinnacle_1',
+        alt: 'Modern corporate office interior',
+        caption: 'Flexible column-free office floor plates adaptable for modern work styles.',
+        order: 1
+      },
+      {
+        url: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=1200&q=80',
+        publicId: 'demo_pinnacle_2',
+        alt: 'Bright executive conference room',
+        caption: 'Shared business center facilities and executive meeting suites.',
+        order: 2
+      }
+    ],
+    video: {
+      provider: 'none',
+      url: '',
+      embedUrl: '',
+      publicId: ''
+    },
+    seo: {
+      title: 'The Pinnacle Commercial Suites | Gurugram Office Spaces | Nivara Infrastructure',
+      description: 'Discover Grade-A commercial office suites in Cyber City Gurugram. Marketed by Nivara Infrastructure.',
+      keywords: ['commercial property', 'office space', 'Gurugram commercial', 'retail shops', 'Nivara Infrastructure']
+    }
+  },
+  {
+    title: 'Emerald Valley Residential Enclave',
+    slug: 'emerald-valley-residential-enclave',
+    category: 'Residential Plots',
+    location: 'Devanahalli Airport Highway Corridor, Bengaluru, Karnataka',
+    developerName: 'Greenfield Landholdings & Developers',
+    clientName: 'Greenfield Landholdings & Developers',
+    price: '₹52 Lakh – ₹1.15 Cr',
+    priceNumeric: 5200000,
+    configuration: 'Villa Plots (1,200 to 2,400 sq.ft.)',
+    area: '1,200 – 2,400 sq.ft. Plots',
+    possessionDate: 'Immediate Registration',
+    reraId: '',
+    isDemo: true,
+    constructionStatus: 'Ready to Move',
     publicationStatus: 'Published',
     archiveStatus: 'Active',
     isFeatured: false,
+    amenities: [
+      'Gated Boundary Wall with Security Gate',
+      'Blacktop Asphalt Wide Internal Roads (40ft & 30ft)',
+      'Underground Electrical & Water Connections',
+      'LED Solar Street Lighting',
+      'Themed Landscape Parks & Herb Gardens',
+      'Clubhouse with Swimming Pool & Sports Lawn',
+      'Rainwater Recharge Wells'
+    ],
     timeline: {
-      startDate: new Date('2023-09-01'),
-      estimatedCompletionDate: new Date('2025-08-30')
+      startDate: new Date('2022-01-10'),
+      completionDate: new Date('2023-11-20')
     },
-    shortDescription: 'A 180-acre modern intermodal logistics terminal featuring automated high-bay warehouses, rail siding container yards, and heavy-duty industrial pavements.',
-    fullDescription: 'The Sonipat Logistics Terminal provides seamless connectivity between direct freight rail lines and national highways. The terminal includes three climate-controlled high-bay fulfillment centers spanning over 2.4 million square feet of clear-span structural steel buildings.\n\nThe project features jointless post-tensioned industrial flooring slabs designed to withstand continuous 120-kN axle loads and precision automated guided vehicle (AGV) traffic.',
+    shortDescription: 'Clear-title approved plotted development positioned along Bengaluru’s international airport growth corridor, ready for immediate registration and custom villa construction.',
+    fullDescription: 'Emerald Valley offers strategic land investment and the ideal canvas for building your custom dream home. Marketed by Nivara Infrastructure in partnership with Greenfield Landholdings, the plotted layout spans 30 acres with comprehensive underground infrastructure already fully installed.\n\nThe layout is approved by municipal authorities with all individual plot demarcations, concrete curbs, tree avenues, and dual water supply connections in place.\n\n*Listing Disclaimer: Marketed by Nivara Infrastructure. Plotted development executed by Greenfield Landholdings & Developers. Title documents available for review by prospective buyers.*',
     scopeOfWork: [
-      '2.4 million sq. ft. of structural steel clear-span logistics warehouses',
-      'Post-tensioned jointless floor slabs engineered to FM2 flatness standards',
-      '4-track direct rail freight siding with heavy crane gantry foundations',
-      'Automated truck staging yards, stormwater detention ponds, and bio-retention swales'
+      'Site layout inspection and individual plot selection assistance',
+      'Title document inspection and legal clearance review',
+      'Coordination with approved architects for custom villa blueprints',
+      'Registration assistance at the local sub-registrar office'
     ],
     specifications: [
-      { label: 'Site Footprint', value: '180 Acres' },
-      { label: 'Covered Warehouse Space', value: '2,400,000 sq. ft.' },
-      { label: 'Clear Ceiling Height', value: '14.5 meters' },
-      { label: 'Pavement Design Load', value: 'Jointless Post-Tensioned Concrete (120 kN)' },
-      { label: 'Container Handling Capacity', value: '450,000 TEU per Annum' },
-      { label: 'Rail Siding Tracks', value: '4 Full-Length 750m Loop Lines' }
+      { label: 'Layout Scale', value: '30 Acres Approved Plotted Development' },
+      { label: 'Plot Dimensions', value: '30x40 (1,200 sq.ft.) & 40x60 (2,400 sq.ft.)' },
+      { label: 'Internal Road Width', value: '40 Feet Main Avenues & 30 Feet Cross Roads' },
+      { label: 'Utility Reticulation', value: '100% Underground Cabling & Piped Water' },
+      { label: 'Title Clearance', value: 'Approved Clear Title with Bank Loan Tie-ups' },
+      { label: 'Registration Status', value: 'Immediate Registration Ready' }
     ],
     coverImage: {
-      url: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1600&q=80',
-      publicId: 'demo_logistics_cover',
-      alt: 'Massive modern warehouse interior with clear structural steel spans',
-      caption: 'Structural steel erection for 2.4 million sq. ft. intermodal logistics hub.'
+      url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=80',
+      publicId: 'demo_emerald_cover',
+      alt: 'Serene green open landscape for plotted residential development',
+      caption: 'Emerald Valley — Approved premium villa plots near Airport Corridor.'
     },
     gallery: [
       {
-        url: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=1200&q=80',
-        publicId: 'demo_logistics_1',
-        alt: 'Container terminal yard',
-        caption: 'Heavy container yard roller-compacted concrete pavement completion.',
+        url: 'https://images.unsplash.com/photo-1592595896551-12b371d546d5?auto=format&fit=crop&w=1200&q=80',
+        publicId: 'demo_emerald_1',
+        alt: 'Wide tree-lined asphalt road inside residential layout',
+        caption: 'Paved avenues with underground utilities and solar illumination.',
         order: 1
       }
     ],
@@ -317,53 +403,69 @@ const DEMO_PROJECTS = [
       publicId: ''
     },
     seo: {
-      title: 'Sonipat Logistics & Freight Terminal | Nivara Infrastructure',
-      description: 'Explore the 180-acre Sonipat Logistics & Freight Terminal project: precision industrial slabs and structural steel logistics facilities.',
-      keywords: ['logistics hub', 'industrial warehouse', 'post-tensioned slab', 'intermodal rail terminal']
+      title: 'Emerald Valley Villa Plots | Airport Road Bengaluru | Nivara Infrastructure',
+      description: 'Approved residential plots for sale near Bengaluru Airport. Marketed by Nivara Infrastructure.',
+      keywords: ['residential plots', 'villa plots Bangalore', 'land investment', 'Devanahalli plots']
     }
   },
   {
-    title: 'Mahanadi Water Supply and Treatment Facility',
-    slug: 'mahanadi-water-supply-and-treatment-facility',
-    category: 'Water & Utilities',
-    location: 'Cuttack-Bhubaneswar Urban Agglomeration, Odisha',
-    clientName: 'State Water Works & Municipal Board (Demonstration)',
-    constructionStatus: 'Planned',
+    title: 'Serenity Lakeview Penthouses',
+    slug: 'serenity-lakeview-penthouses',
+    category: 'Luxury Residences',
+    location: 'Jubilee Hills Lakeside, Hyderabad, Telangana',
+    developerName: 'Serenity Premier Living LLP',
+    clientName: 'Serenity Premier Living LLP',
+    price: '₹5.50 Cr – ₹9.80 Cr',
+    priceNumeric: 55000000,
+    configuration: '4 & 5 BHK Duplex Penthouses',
+    area: '4,500 – 6,800 sq.ft.',
+    possessionDate: 'Pre-Launch / Q1 2027',
+    reraId: '',
+    isDemo: true,
+    constructionStatus: 'Upcoming / Pre-Launch',
     publicationStatus: 'Published',
     archiveStatus: 'Active',
-    isFeatured: false,
+    isFeatured: true,
+    amenities: [
+      'Private Plunge Pool on Every Terrace',
+      'Panoramic 360-Degree Lake & City Views',
+      'Private Temperature-Controlled Wine Cellar',
+      'Automated Valet Parking with 4 Designated Bays',
+      'Personal Butler & Concierge Desk',
+      'Direct Biometric Elevator Access'
+    ],
     timeline: {
-      startDate: new Date('2024-11-01'),
-      estimatedCompletionDate: new Date('2028-03-31')
+      startDate: new Date('2024-04-01'),
+      estimatedCompletionDate: new Date('2027-03-31')
     },
-    shortDescription: 'A 650 MLD state-of-the-art potable water intake, clarification, filtration, and regional transmission pipeline network serving 3.5 million residents.',
-    fullDescription: 'The Mahanadi Water Supply Project is engineered to secure clean municipal drinking water through sustainable gravity-flow treatment. The design incorporates a circular river intake structure with self-cleaning fish-friendly screens, multi-stage flash flocculation basins, dual-media rapid gravity filters, and ozone contact disinfection chambers.\n\nThe project includes 160 kilometers of welded ductile iron and mild steel water transmission mains up to 2,200 mm diameter.',
+    shortDescription: 'Ultra-exclusive duplex penthouses overlooking the historic lake, offering private terrace plunge pools, private elevator entries, and bespoke customized interiors. Marketed by Nivara Infrastructure.',
+    fullDescription: 'Serenity Lakeview represents the pinnacle of private luxury living in Hyderabad’s most distinguished enclave. Marketed on behalf of Serenity Premier Living by Nivara Infrastructure, this limited collection consists of just 12 limited-edition duplex penthouses.\n\nDesigned by international architectural consultants, each home incorporates an expansive double-height terrace garden with a heated infinity plunge pool, private elevator vestibules, dedicated quarters for personal staff, and imported floor finishes.\n\n*Listing Disclaimer: Marketed by Nivara Infrastructure. Developed by Serenity Premier Living LLP. Pre-launch expressions of interest are registered strictly according to statutory permissions and developer verification.*',
     scopeOfWork: [
-      'River intake well and pump house with 650 MLD initial pumping capacity',
-      'Turnkey civil construction of 650 MLD advanced water treatment plant (WTP)',
-      'Laying of 160 km large-diameter water transmission pipeline (1,400 - 2,200 mm)',
-      'Master Supervisory Control and Data Acquisition (SCADA) telemetry and surge vessels'
+      'Confidential high-net-worth buyer advisory and portfolio matching',
+      'Private developer architectural review and layout customisation meetings',
+      'Structured installment payment schedule and escrow contract consultation',
+      'End-to-end luxury asset transaction management'
     ],
     specifications: [
-      { label: 'Plant Nominal Capacity', value: '650 Million Liters per Day (MLD)' },
-      { label: 'Intake Well Diameter', value: '32-meter Reinforced Concrete Well' },
-      { label: 'Treated Water Storage Reservoir', value: '95,000 m³ Underground Reservoir' },
-      { label: 'Transmission Pipeline Network', value: '162 km (1,400mm - 2,200mm MS/DI Pipe)' },
-      { label: 'Service Population Target', value: '3,500,000 Residents' },
-      { label: 'Water Quality Standard', value: 'IS 10500:2012 / WHO Guidelines' }
+      { label: 'Collection Exclusivity', value: 'Limited Edition (Only 12 Penthouses)' },
+      { label: 'Unit Sizes', value: '4,500 to 6,800 sq.ft. Duplex Layouts' },
+      { label: 'Terrace Feature', value: 'Private Heated Plunge Pool & Deck' },
+      { label: 'Elevator Security', value: 'Direct Biometric Keyed Elevator Access' },
+      { label: 'Parking Provision', value: '4 Dedicated Basement Stalls per Penthouse' },
+      { label: 'Current Status', value: 'Upcoming / Verified Pre-Launch Stage' }
     ],
     coverImage: {
-      url: 'https://images.unsplash.com/photo-1584467735871-8e85353a8413?auto=format&fit=crop&w=1600&q=80',
-      publicId: 'demo_water_cover',
-      alt: 'Clean water treatment facility basins and engineering structures',
-      caption: 'Circular clarifier and flocculation basin civil engineering works.'
+      url: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1600&q=80',
+      publicId: 'demo_serenity_cover',
+      alt: 'Luxury duplex penthouse terrace overlooking lake',
+      caption: 'Serenity Lakeview — Limited-edition luxury penthouses with private terrace pools.'
     },
     gallery: [
       {
-        url: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1200&q=80',
-        publicId: 'demo_water_1',
-        alt: 'Large pipeline excavation and installation',
-        caption: '2,200 mm raw water pipeline trenching, bedding, and cathodic protection.',
+        url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80',
+        publicId: 'demo_serenity_1',
+        alt: 'Ultra-luxury penthouse living room with double height ceiling',
+        caption: 'Double-height glass facade with tranquil lake views.',
         order: 1
       }
     ],
@@ -374,16 +476,16 @@ const DEMO_PROJECTS = [
       publicId: ''
     },
     seo: {
-      title: 'Mahanadi Water Supply & Treatment Facility | Nivara Infrastructure',
-      description: 'Discover the 650 MLD Mahanadi Water Supply and Treatment Facility demonstration project serving 3.5 million residents.',
-      keywords: ['water treatment plant', 'intake well', 'transmission pipeline', 'civil water infrastructure']
+      title: 'Serenity Lakeview Penthouses | Jubilee Hills Luxury | Nivara Infrastructure',
+      description: 'Exclusive 4 & 5 BHK duplex penthouses in Jubilee Hills Hyderabad. Marketed by Nivara Infrastructure.',
+      keywords: ['luxury penthouses', 'Jubilee Hills property', 'Hyderabad luxury residences', 'Nivara Infrastructure']
     }
   }
 ];
 
 async function seedDemo() {
   try {
-    console.log('🌱 Seeding demonstration projects for Nivara Infrastructure...');
+    console.log('🌱 Seeding real estate demonstration properties for Nivara Infrastructure...');
     await connectDB();
 
     const admin = await User.findOne({ role: 'superadmin' });
@@ -391,29 +493,29 @@ async function seedDemo() {
 
     let seededCount = 0;
 
-    for (const projectData of DEMO_PROJECTS) {
+    for (const propertyData of DEMO_PROPERTIES) {
       const updateData = {
-        ...projectData,
+        ...propertyData,
         createdBy: adminId,
         updatedBy: adminId
       };
 
       await Project.findOneAndUpdate(
-        { slug: projectData.slug },
+        { slug: propertyData.slug },
         updateData,
         { upsert: true, new: true, setDefaultsOnInsert: true }
       );
       seededCount++;
-      console.log(`  ✓ Seeded/Updated project: ${projectData.title} (${projectData.category})`);
+      console.log(`  ✓ Seeded/Updated property: ${propertyData.title} (${propertyData.category}) - ${propertyData.price}`);
     }
 
-    console.log(`\n🎉 Successfully seeded ${seededCount} demonstration projects.`);
-    console.log('📌 All demonstration projects are marked as demonstration case studies with complete specifications and imagery.');
+    console.log(`\n🎉 Successfully seeded ${seededCount} real estate demonstration properties.`);
+    console.log('📌 All properties communicate Nivara Infrastructure marketing role and credit respective developers.');
 
     await disconnectDB();
     process.exit(0);
   } catch (err) {
-    console.error('❌ Failed to seed demonstration projects:', err.message);
+    console.error('❌ Failed to seed demonstration properties:', err.message);
     process.exit(1);
   }
 }

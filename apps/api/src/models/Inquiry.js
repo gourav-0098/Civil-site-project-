@@ -27,10 +27,25 @@ const inquirySchema = new mongoose.Schema(
       default: '',
       maxlength: 150
     },
+    propertyId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Project'
+    },
+    propertyTitle: {
+      type: String,
+      trim: true,
+      default: '',
+      maxlength: 200
+    },
     inquiryType: {
       type: String,
       required: true,
       enum: [
+        'Schedule a Site Visit',
+        'Price & Brochure Request',
+        'Booking / Purchase Inquiry',
+        'General Property Inquiry',
+        'Commercial Property Inquiry',
         'Project Tender / RFP',
         'General Construction Inquiry',
         'Partnership / Joint Venture',
@@ -38,7 +53,7 @@ const inquirySchema = new mongoose.Schema(
         'Careers',
         'Other'
       ],
-      default: 'General Construction Inquiry'
+      default: 'General Property Inquiry'
     },
     projectLocation: {
       type: String,

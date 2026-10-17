@@ -30,6 +30,7 @@ export async function getPublicProjects(req, res, next) {
       query.$or = [
         { title: { $regex: term, $options: 'i' } },
         { location: { $regex: term, $options: 'i' } },
+        { developerName: { $regex: term, $options: 'i' } },
         { shortDescription: { $regex: term, $options: 'i' } }
       ];
     }
@@ -39,11 +40,15 @@ export async function getPublicProjects(req, res, next) {
       sortOption = { createdAt: 1 };
     } else if (sort === 'title') {
       sortOption = { title: 1 };
+    } else if (sort === 'price_asc') {
+      sortOption = { priceNumeric: 1, createdAt: -1 };
+    } else if (sort === 'price_desc') {
+      sortOption = { priceNumeric: -1, createdAt: -1 };
     }
 
     const [projects, total] = await Promise.all([
       Project.find(query)
-        .select('title slug category location constructionStatus coverImage shortDescription isFeatured timeline createdAt')
+        .select('title slug category location developerName clientName price priceNumeric configuration area amenities reraId possessionDate constructionStatus coverImage shortDescription isFeatured isDemo timeline createdAt')
         .sort(sortOption)
         .skip(skip)
         .limit(limit)
@@ -76,7 +81,7 @@ export async function getFeaturedProjects(req, res, next) {
       archiveStatus: 'Active',
       isFeatured: true
     })
-      .select('title slug category location constructionStatus coverImage shortDescription timeline')
+      .select('title slug category location developerName clientName price priceNumeric configuration area amenities constructionStatus coverImage shortDescription isDemo timeline')
       .sort({ createdAt: -1 })
       .limit(6)
       .lean();
@@ -107,7 +112,9 @@ export async function getProjectBySlug(req, res, next) {
       query.archiveStatus = 'Active';
     }
 
-    const project = await Project.findOne(query).lean();
+    const project = await Project.findOne(query)
+      .select('-createdBy -updatedBy')
+      .lean();
 
     if (!project) {
       return res.status(404).json({
@@ -123,7 +130,7 @@ export async function getProjectBySlug(req, res, next) {
       publicationStatus: 'Published',
       archiveStatus: 'Active'
     })
-      .select('title slug category location constructionStatus coverImage shortDescription')
+      .select('title slug category location developerName clientName price configuration area constructionStatus coverImage shortDescription isDemo')
       .limit(3)
       .lean();
 

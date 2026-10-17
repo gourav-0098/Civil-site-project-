@@ -64,23 +64,23 @@ export default function AdminDashboardPage() {
 
   const METRIC_CARDS = [
     {
-      title: 'Total Projects',
+      title: 'Total Properties',
       value: metrics.totalProjects,
-      desc: 'All database records',
+      desc: 'All database listings',
       icon: FolderKanban,
       color: 'text-navy-900',
       bg: 'bg-white'
     },
     {
-      title: 'Published & Public',
+      title: 'Published Listings',
       value: metrics.publishedProjects,
-      desc: 'Visible on corporate website',
+      desc: 'Live on public website',
       icon: CheckCircle2,
       color: 'text-emerald-600',
       bg: 'bg-emerald-50/50'
     },
     {
-      title: 'Draft Projects',
+      title: 'Draft Listings',
       value: metrics.draftProjects,
       desc: 'Internal only (unpublished)',
       icon: Clock,
@@ -88,25 +88,25 @@ export default function AdminDashboardPage() {
       bg: 'bg-amber-50/50'
     },
     {
-      title: 'Ongoing Construction',
+      title: 'Under Construction',
       value: metrics.ongoingProjects,
-      desc: 'Active site execution',
+      desc: 'Active construction stage',
       icon: Activity,
       color: 'text-blue-600',
       bg: 'bg-blue-50/50'
     },
     {
-      title: 'Completed Infrastructure',
+      title: 'Ready to Move',
       value: metrics.completedProjects,
-      desc: 'Delivered & commissioned',
+      desc: 'Ready for handover',
       icon: ShieldAlert,
       color: 'text-indigo-600',
       bg: 'bg-indigo-50/50'
     },
     {
-      title: 'New Inquiries',
+      title: 'Buyer Inquiries',
       value: metrics.newInquiries,
-      desc: 'Pending tender reviews',
+      desc: 'Pending buyer requests',
       icon: Inbox,
       color: 'text-industrial-orange',
       bg: 'bg-orange-50/50'
@@ -119,10 +119,10 @@ export default function AdminDashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-steel-200 pb-5">
         <div>
           <span className="text-xs font-mono font-semibold text-industrial-orange uppercase tracking-wider">
-            Operational Telemetry
+            Property Operations
           </span>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-navy-900 font-display">
-            CMS Executive Dashboard
+            Property CMS Executive Dashboard
           </h1>
         </div>
         <div className="flex items-center gap-3">
@@ -131,7 +131,7 @@ export default function AdminDashboardPage() {
             className="inline-flex items-center gap-2 px-4 py-2 bg-industrial-orange hover:bg-industrial-orangeHover text-white text-xs font-bold uppercase tracking-wider transition-colors shadow-sm"
           >
             <PlusCircle className="w-4 h-4" />
-            <span>Create Project</span>
+            <span>Add Property</span>
           </Link>
           <Link
             href="/projects"
@@ -139,7 +139,7 @@ export default function AdminDashboardPage() {
             className="inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-steel-300 hover:bg-steel-50 text-navy-900 text-xs font-semibold transition-colors"
           >
             <ExternalLink className="w-3.5 h-3.5" />
-            <span>Live Directory</span>
+            <span>Live Portfolio</span>
           </Link>
         </div>
       </div>

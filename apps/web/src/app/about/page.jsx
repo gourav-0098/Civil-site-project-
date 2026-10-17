@@ -1,29 +1,29 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { ShieldCheck, HardHat, Award, Target, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, Home, Target, ArrowRight, CheckCircle2, Building, Users } from 'lucide-react';
 
 export const metadata = {
-  title: 'About Nivara Infrastructure | Engineering & Construction Philosophy',
-  description: 'Learn about Nivara Infrastructure: our mission, values, disciplined engineering approach, and commitment to structural durability.'
+  title: 'About Nivara Infrastructure | Real Estate Marketing & Property Sales',
+  description: 'Learn about Nivara Infrastructure: our mission, values, transparent property marketing approach, and commitment to assisting property buyers.'
 };
 
 export default function AboutPage() {
   const VALUES = [
     {
-      title: 'Engineering Rigor',
-      desc: 'Zero tolerance for structural shortcuts. Every concrete pour, foundation pile, and structural weld undergoes uncompromising verification.'
+      title: 'Curated Representation',
+      desc: 'We collaborate with established builders and developers to market residential and commercial properties.'
     },
     {
-      title: 'Zero-Harm Safety',
-      desc: 'Human life and occupational wellbeing precede all operational targets. Daily safety briefings and proactive hazard mitigation are mandatory.'
+      title: 'Customer-Focused Assistance',
+      desc: 'We prioritize the buyer’s practical preferences, budget limits, and lifestyle needs over aggressive sales quotas.'
     },
     {
-      title: 'Operational Precision',
-      desc: 'Disciplined supply chain control, calibrated equipment deployment, and adherence to tight contractual project milestones.'
+      title: 'Transparent Information',
+      desc: 'We provide clear floor plans, genuine price guidance, statutory details, and realistic possession timelines without misleading promises.'
     },
     {
-      title: 'Long-Term Durability',
-      desc: 'Designing and building assets for a century of operational service under severe environmental, seismic, and tidal challenges.'
+      title: 'End-to-End Coordination',
+      desc: 'From scheduling initial site tours to facilitating documentation and developer coordination, we support you through your journey.'
     }
   ];
 
@@ -33,63 +33,60 @@ export default function AboutPage() {
       <div className="bg-navy-950 text-white relative py-20 lg:py-28 overflow-hidden border-b border-navy-800">
         <div className="absolute inset-0 z-0">
           <Image
-            src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1600&q=80"
-            alt="Civil engineers inspecting infrastructure works"
+            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80"
+            alt="Modern residential architecture"
             fill
             priority
             className="object-cover opacity-20 mix-blend-luminosity"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-950/80 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-950/85 to-transparent" />
           <div className="absolute inset-0 bg-grid-pattern-dark opacity-10" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           <span className="text-xs font-mono font-semibold text-industrial-orange uppercase tracking-widest">
-            Corporate Profile
+            Company Profile
           </span>
           <h1 className="text-4xl sm:text-6xl font-extrabold text-white font-display max-w-3xl leading-tight">
-            Built On Discipline. Engineered For Decades.
+            Guiding You to the Right Property with Clarity & Trust.
           </h1>
           <p className="text-steel-300 text-base sm:text-lg max-w-2xl leading-relaxed">
-            Nivara Infrastructure delivers considered engineering and heavy civil construction solutions for the vital infrastructure that sustains commerce, transit, and public welfare.
+            Nivara Infrastructure is a dedicated real estate marketing and property sales consultancy, helping homebuyers and investors discover quality residential and commercial properties.
           </p>
         </div>
       </div>
 
-      {/* Overview & Purpose */}
+      {/* Role & Business Identity Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="space-y-6">
               <span className="text-xs font-mono font-semibold text-industrial-orange uppercase tracking-widest">
-                Our Purpose & Mission
+                Our Business Identity
               </span>
               <h2 className="text-3xl sm:text-4xl font-extrabold text-navy-900 font-display">
-                Delivering High-Load Infrastructure With Uncompromising Quality
+                Connecting Prospective Buyers with Quality Properties
               </h2>
               <p className="text-steel-600 text-sm leading-relaxed">
-                Modern economies depend on reliable highways, safe river crossings, resilient energy grids, and clean water transmission. Nivara Infrastructure was organized to bridge the gap between architectural ambition and ground-truth heavy civil execution.
+                Navigating today’s property landscape can be complex and overwhelming. Nivara Infrastructure bridges the gap between buyers seeking quality properties and the builders who develop them.
               </p>
               <p className="text-steel-600 text-sm leading-relaxed">
-                By maintaining specialized heavy equipment fleets, cultivating skilled engineering cadres, and employing advanced prefabrication techniques, we minimize on-site disruptions and deliver structures built to endure extreme climatic, seismic, and corrosive environments.
+                As a real estate marketing and sales facilitation company, Nivara Infrastructure presents carefully selected residential flats, gated villa societies, luxury residences, commercial office suites, and residential plots constructed by established developers.
               </p>
-
-              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-steel-200">
-                <div className="space-y-1">
-                  <span className="text-2xl font-bold text-navy-900 font-mono">100+ Yrs</span>
-                  <p className="text-xs text-steel-500">Structural Design Life Standard</p>
-                </div>
-                <div className="space-y-1">
-                  <span className="text-2xl font-bold text-navy-900 font-mono">Zero Harm</span>
-                  <p className="text-xs text-steel-500">Target Occupational Benchmark</p>
-                </div>
+              <div className="p-4 bg-steel-50 border-l-4 border-industrial-orange space-y-1">
+                <p className="text-xs font-bold text-navy-900 uppercase font-mono">
+                  Our Clear Business Role
+                </p>
+                <p className="text-xs text-steel-600">
+                  Nivara Infrastructure markets properties and assists customers in purchasing them. Nivara does not claim to have constructed, engineered, or developed the properties displayed on this website unless explicitly stated.
+                </p>
               </div>
             </div>
 
             <div className="relative aspect-[4/3] bg-steel-100 border border-steel-200 overflow-hidden shadow-lg">
               <Image
-                src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80"
-                alt="Engineers reviewing structural drawings on construction site"
+                src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80"
+                alt="Real estate advisors discussing property plans"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
@@ -99,15 +96,15 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Core Values */}
+      {/* Core Principles */}
       <section className="py-20 bg-steel-100 border-y border-steel-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mb-14 space-y-3">
             <span className="text-xs font-mono font-semibold text-industrial-orange uppercase tracking-widest">
-              Foundational Principles
+              Our Principles
             </span>
             <h2 className="text-3xl font-extrabold text-navy-900 font-display">
-              Core Engineering Values
+              How We Serve Homebuyers & Investors
             </h2>
           </div>
 
@@ -129,18 +126,18 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Technical Approach */}
+      {/* Advisory Commitments */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-4 mb-12">
             <span className="text-xs font-mono font-semibold text-industrial-orange uppercase tracking-widest">
-              Operational Standards
+              Transparency
             </span>
             <h2 className="text-3xl font-extrabold text-navy-900 font-display">
-              Quality Assurance & Verification Culture
+              Our Commitment to Accurate Property Information
             </h2>
             <p className="text-steel-600 text-sm leading-relaxed">
-              We deploy systematic quality verification checkpoints across all construction activities:
+              We hold ourselves to rigorous standards of accuracy in how property information is communicated:
             </p>
           </div>
 
@@ -148,30 +145,30 @@ export default function AboutPage() {
             <div className="p-6 bg-steel-50 border border-steel-200 space-y-3">
               <ShieldCheck className="w-6 h-6 text-industrial-orange" />
               <h3 className="text-base font-bold text-navy-900 font-display">
-                Concrete Mix Verification
+                Developer Information
               </h3>
               <p className="text-xs text-steel-600 leading-relaxed">
-                Batch-by-batch digital slump and temperature tracking, 7-day and 28-day core compression crushing, and micro-crack ultrasonic velocity checks.
+                We present developer credentials, project brochures, and published statutory registration parameters provided by the builder.
               </p>
             </div>
 
             <div className="p-6 bg-steel-50 border border-steel-200 space-y-3">
-              <Award className="w-6 h-6 text-industrial-orange" />
+              <Home className="w-6 h-6 text-industrial-orange" />
               <h3 className="text-base font-bold text-navy-900 font-display">
-                Geotechnical & Foundation Integrity
+                Guided Site Access
               </h3>
               <p className="text-xs text-steel-600 leading-relaxed">
-                Cross-hole sonic logging (CSL) across every large-diameter bored pile, hydraulic Osterberg-cell load testing, and groundwater salinity monitoring.
+                We coordinate personalized site inspections, sample flat walkthroughs, and community reviews so you can evaluate properties in person.
               </p>
             </div>
 
             <div className="p-6 bg-steel-50 border border-steel-200 space-y-3">
-              <Target className="w-6 h-6 text-industrial-orange" />
+              <Building className="w-6 h-6 text-industrial-orange" />
               <h3 className="text-base font-bold text-navy-900 font-display">
-                Safety Protocol & PPE Compliance
+                Direct Developer Link
               </h3>
               <p className="text-xs text-steel-600 leading-relaxed">
-                Zero tolerance for non-compliance with fall arrest systems, heavy crane exclusion zones, gas detection in deep excavations, and certified rigger supervision.
+                We facilitate direct communication between you and the property developer, ensuring smooth documentation, booking, and handover processes.
               </p>
             </div>
           </div>
@@ -182,18 +179,26 @@ export default function AboutPage() {
       <section className="py-16 bg-navy-950 text-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
           <h2 className="text-3xl font-extrabold font-display">
-            Explore Collaboration Opportunities
+            Start Your Property Search Today
           </h2>
           <p className="text-steel-400 text-sm max-w-xl mx-auto">
-            Discuss joint ventures, EPC packages, or commercial construction tenders with Nivara Infrastructure engineering leadership.
+            Connect with our advisory team to discuss your residential or commercial property requirements.
           </p>
-          <Link
-            href="/contact"
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-industrial-orange hover:bg-industrial-orangeHover text-white text-xs font-bold uppercase tracking-wider transition-all shadow-md"
-          >
-            <span>Contact Engineering Desk</span>
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              href="/projects"
+              className="inline-flex items-center gap-2 px-8 py-3.5 bg-industrial-orange hover:bg-industrial-orangeHover text-white text-xs font-bold uppercase tracking-wider transition-all shadow-md"
+            >
+              <span>Explore Properties</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              href="/contact"
+              className="inline-flex items-center gap-2 px-8 py-3.5 bg-navy-900 border border-steel-700 hover:border-steel-500 text-white text-xs font-bold uppercase tracking-wider transition-colors"
+            >
+              <span>Contact Our Advisors</span>
+            </Link>
+          </div>
         </div>
       </section>
     </div>

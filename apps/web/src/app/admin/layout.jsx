@@ -19,8 +19,8 @@ import {
 
 const ADMIN_NAV = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/admin/projects', label: 'Projects Portfolio', icon: FolderKanban },
-  { href: '/admin/inquiries', label: 'Inquiries & Tenders', icon: Inbox },
+  { href: '/admin/projects', label: 'Property Listings', icon: FolderKanban },
+  { href: '/admin/inquiries', label: 'Buyer Inquiries', icon: Inbox },
   { href: '/admin/settings', label: 'Settings & Security', icon: Settings }
 ];
 
@@ -142,7 +142,7 @@ export default function AdminLayout({ children }) {
               className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-industrial-orange hover:bg-industrial-orangeHover text-white text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm"
             >
               <PlusCircle className="w-4 h-4" />
-              <span>Create Project</span>
+              <span>Add Property</span>
             </Link>
           </div>
 

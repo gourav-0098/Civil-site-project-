@@ -1,6 +1,6 @@
 export const metadata = {
-  title: 'Terms of Engagement | Nivara Infrastructure',
-  description: 'Terms of engagement, portal use, and demonstration guidelines for Nivara Infrastructure web services.'
+  title: 'Terms of Service & Property Disclaimers | Nivara Infrastructure',
+  description: 'Terms of service, website use, and property marketing disclaimers for Nivara Infrastructure web services.'
 };
 
 export default function TermsPage() {
@@ -9,50 +9,65 @@ export default function TermsPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="space-y-2 border-b border-steel-200 pb-6">
           <span className="text-xs font-mono font-semibold text-industrial-orange uppercase tracking-wider">
-            Legal Terms & Conditions
+            Legal Terms & Regulatory Disclaimers
           </span>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-navy-900 font-display">
-            Terms of Engagement
+            Terms of Service
           </h1>
           <p className="text-xs text-steel-500 font-mono">
-            Effective Date: January 1, 2026 • Document Version 1.1
+            Effective Date: January 1, 2026 • Document Version 2.0 (Real Estate Marketing)
           </p>
         </div>
 
         <div className="prose prose-slate max-w-none text-steel-700 text-sm leading-relaxed space-y-6">
           <section className="space-y-3">
             <h2 className="text-xl font-bold text-navy-900 font-display">
-              1. Website & Portal Utilization
+              1. Business Identity & Nature of Services
             </h2>
             <p>
-              By accessing and using this web portal, you agree to comply with and be bound by these Terms of Engagement. All technical specifications, drawings, project archetypes, and documentation published on this portal are provided for informational and preliminary commercial evaluation purposes.
+              Nivara Infrastructure is a real estate marketing and property sales consultancy. Nivara Infrastructure markets properties developed and constructed by other builders and developers and assists prospective customers with property discovery, site visits, and purchase facilitation.
+            </p>
+            <p>
+              Unless explicitly stated in writing for a specific property, Nivara Infrastructure is not the builder, developer, civil engineering contractor, or architect of the properties presented on this website.
             </p>
           </section>
 
           <section className="space-y-3">
             <h2 className="text-xl font-bold text-navy-900 font-display">
-              2. Demonstration Archetypes & Portfolio Content
+              2. Accuracy of Property Information & Independent Verification
             </h2>
             <p>
-              Certain project case studies displayed across the public directory are marked as demonstration case studies and archetypes for illustrating engineering capabilities, structural methodologies, and equipment deployment. Binding contractual commitments are governed strictly by executed engineering, procurement, and construction (EPC) contracts.
+              All property descriptions, visual images, floor plans, dimensions, pricing estimates, amenities, and possession timelines published on this website are provided for informational and marketing purposes based on data supplied by respective developers.
+            </p>
+            <p>
+              Nothing on this website constitutes a binding offer to sell or a financial guarantee of return or capital appreciation. Prospective buyers are strongly advised to independently verify all project parameters, statutory approvals, and applicable RERA registrations directly with the relevant developer prior to entering into any agreement or making financial commitments.
             </p>
           </section>
 
           <section className="space-y-3">
             <h2 className="text-xl font-bold text-navy-900 font-display">
-              3. Intellectual Property Rights
+              3. Demonstration Property Listings
             </h2>
             <p>
-              All proprietary brand wordmarks, engineering text, structural layouts, and software architectures contained herein are the property of Nivara Infrastructure or used under legal license. Unauthorized reproduction or scraping of content without written permission is prohibited.
+              Certain property listings displayed during initial platform previews are designated as representative demonstration listings to illustrate architectural categories, layout presentation, and advisory features. These listings do not represent live inventory commitments.
             </p>
           </section>
 
           <section className="space-y-3">
             <h2 className="text-xl font-bold text-navy-900 font-display">
-              4. Governing Law
+              4. Intellectual Property
             </h2>
             <p>
-              These terms are governed by the laws of India. Any legal disputes arising out of the use of this portal shall be subject to the exclusive jurisdiction of the competent courts in Mumbai, Maharashtra.
+              Brand wordmarks, logos, original editorial content, and software architecture are the intellectual property of Nivara Infrastructure. Property visual assets and project renderings are credited to their respective developers or used under appropriate license. Unauthorized copying or automated scraping of website content is prohibited.
+            </p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-xl font-bold text-navy-900 font-display">
+              5. Governing Law & Jurisdiction
+            </h2>
+            <p>
+              These Terms of Service are governed by and construed in accordance with the laws of India. Any legal dispute or proceeding arising out of or related to this website shall be subject to the exclusive jurisdiction of the competent courts in Mumbai, Maharashtra.
             </p>
           </section>
         </div>

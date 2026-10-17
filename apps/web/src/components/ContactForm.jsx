@@ -1,20 +1,42 @@
 'use client';
 
-import { useState } from 'react';
-import { Send, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { Send, CheckCircle2, AlertCircle, Loader2, Calendar, Home } from 'lucide-react';
 
-export default function ContactForm() {
+function ContactFormContent({
+  propertyId = '',
+  propertyTitle = '',
+  defaultInquiryType = 'Schedule a Site Visit'
+}) {
+  const searchParams = useSearchParams();
+
+  const paramSubject = searchParams?.get('subject') || '';
+  const paramProperty = searchParams?.get('property') || propertyTitle;
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     organization: '',
-    inquiryType: 'Project Tender / RFP',
+    propertyId: propertyId || '',
+    propertyTitle: paramProperty || '',
+    inquiryType: defaultInquiryType,
     projectLocation: '',
-    subject: '',
+    subject: paramSubject || (paramProperty ? `Inquiry regarding ${paramProperty}` : ''),
     message: '',
     honeypot: ''
   });
+
+  useEffect(() => {
+    if (paramProperty) {
+      setFormData(prev => ({
+        ...prev,
+        propertyTitle: paramProperty,
+        subject: prev.subject || `Inquiry regarding ${paramProperty}`
+      }));
+    }
+  }, [paramProperty]);
 
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState({ state: 'idle', message: '', referenceId: '' });
@@ -27,7 +49,11 @@ export default function ContactForm() {
     }
 
     if (!formData.email.trim() || !/^\S+@\S+\.\S+$/.test(formData.email.trim())) {
-      newErrors.email = 'A valid work email address is required';
+      newErrors.email = 'A valid email address is required';
+    }
+
+    if (!formData.phone.trim() || formData.phone.trim().length < 7) {
+      newErrors.phone = 'A valid contact phone number is required';
     }
 
     if (!formData.subject.trim() || formData.subject.trim().length < 3) {
@@ -35,7 +61,7 @@ export default function ContactForm() {
     }
 
     if (!formData.message.trim() || formData.message.trim().length < 10) {
-      newErrors.message = 'Please provide details in your message (min 10 characters)';
+      newErrors.message = 'Please provide details in your inquiry (min 10 characters)';
     }
 
     setErrors(newErrors);
@@ -71,12 +97,12 @@ export default function ContactForm() {
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Failed to submit inquiry. Please try again.');
+        throw new Error(data.error || 'Failed to submit property inquiry. Please try again.');
       }
 
       setStatus({
         state: 'success',
-        message: 'Your inquiry has been successfully transmitted to Nivara Infrastructure project development desk.',
+        message: 'Your inquiry has been received. A Nivara Infrastructure property advisor will contact you shortly.',
         referenceId: data.data?.id || 'REF-NIVARA-' + Date.now().toString().slice(-6)
       });
 
@@ -86,7 +112,9 @@ export default function ContactForm() {
         email: '',
         phone: '',
         organization: '',
-        inquiryType: 'Project Tender / RFP',
+        propertyId: '',
+        propertyTitle: '',
+        inquiryType: 'Schedule a Site Visit',
         projectLocation: '',
         subject: '',
         message: '',
@@ -115,7 +143,7 @@ export default function ContactForm() {
             {status.message}
           </p>
           <div className="pt-2 font-mono text-xs text-steel-400">
-            Filing Reference ID: <span className="font-bold text-navy-900">{status.referenceId}</span>
+            Reference Tracking ID: <span className="font-bold text-navy-900">{status.referenceId}</span>
           </div>
         </div>
         <button
@@ -150,6 +178,14 @@ export default function ContactForm() {
         />
       </div>
 
+      {/* Interested Property Notice if provided */}
+      {formData.propertyTitle && (
+        <div className="p-3 bg-industrial-orange/10 border border-industrial-orange/30 flex items-center gap-2 text-xs text-navy-900 font-medium">
+          <Home className="w-4 h-4 text-industrial-orange shrink-0" />
+          <span>Inquiring about: <strong>{formData.propertyTitle}</strong></span>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {/* Full Name */}
         <div className="space-y-1.5">
@@ -171,10 +207,10 @@ export default function ContactForm() {
           {errors.name && <p className="text-xs text-rose-600">{errors.name}</p>}
         </div>
 
-        {/* Work Email */}
+        {/* Email Address */}
         <div className="space-y-1.5">
           <label htmlFor="email" className="block text-xs font-semibold uppercase tracking-wider text-steel-700">
-            Work Email Address <span className="text-rose-500">*</span>
+            Email Address <span className="text-rose-500">*</span>
           </label>
           <input
             id="email"
@@ -183,7 +219,7 @@ export default function ContactForm() {
             required
             value={formData.email}
             onChange={handleChange}
-            placeholder="e.g. anand.varma@organization.com"
+            placeholder="e.g. anand.varma@example.com"
             className={`w-full px-4 py-2.5 border text-sm text-navy-900 placeholder-steel-400 focus:outline-none focus:ring-1 focus:ring-industrial-orange focus:border-industrial-orange ${
               errors.email ? 'border-rose-500 bg-rose-50/20' : 'border-steel-300'
             }`}
@@ -194,39 +230,27 @@ export default function ContactForm() {
         {/* Phone Number */}
         <div className="space-y-1.5">
           <label htmlFor="phone" className="block text-xs font-semibold uppercase tracking-wider text-steel-700">
-            Phone / Contact Number
+            Phone / WhatsApp Number <span className="text-rose-500">*</span>
           </label>
           <input
             id="phone"
             name="phone"
             type="tel"
+            required
             value={formData.phone}
             onChange={handleChange}
             placeholder="e.g. +91 98765 43210"
-            className="w-full px-4 py-2.5 border border-steel-300 text-sm text-navy-900 placeholder-steel-400 focus:outline-none focus:ring-1 focus:ring-industrial-orange focus:border-industrial-orange"
+            className={`w-full px-4 py-2.5 border text-sm text-navy-900 placeholder-steel-400 focus:outline-none focus:ring-1 focus:ring-industrial-orange focus:border-industrial-orange ${
+              errors.phone ? 'border-rose-500 bg-rose-50/20' : 'border-steel-300'
+            }`}
           />
-        </div>
-
-        {/* Company / Organization */}
-        <div className="space-y-1.5">
-          <label htmlFor="organization" className="block text-xs font-semibold uppercase tracking-wider text-steel-700">
-            Company / Public Entity
-          </label>
-          <input
-            id="organization"
-            name="organization"
-            type="text"
-            value={formData.organization}
-            onChange={handleChange}
-            placeholder="e.g. Regional Transport Authority"
-            className="w-full px-4 py-2.5 border border-steel-300 text-sm text-navy-900 placeholder-steel-400 focus:outline-none focus:ring-1 focus:ring-industrial-orange focus:border-industrial-orange"
-          />
+          {errors.phone && <p className="text-xs text-rose-600">{errors.phone}</p>}
         </div>
 
         {/* Inquiry Classification */}
         <div className="space-y-1.5">
           <label htmlFor="inquiryType" className="block text-xs font-semibold uppercase tracking-wider text-steel-700">
-            Inquiry Category <span className="text-rose-500">*</span>
+            Purpose of Inquiry <span className="text-rose-500">*</span>
           </label>
           <select
             id="inquiryType"
@@ -235,19 +259,20 @@ export default function ContactForm() {
             onChange={handleChange}
             className="w-full px-4 py-2.5 border border-steel-300 text-sm text-navy-900 bg-white focus:outline-none focus:ring-1 focus:ring-industrial-orange focus:border-industrial-orange"
           >
-            <option value="Project Tender / RFP">Project Tender / RFP Submission</option>
-            <option value="General Construction Inquiry">General Construction Inquiry</option>
-            <option value="Partnership / Joint Venture">Partnership / Joint Venture</option>
-            <option value="Vendor / Subcontractor">Vendor / Subcontractor Prequalification</option>
-            <option value="Careers">Careers & Talent</option>
-            <option value="Other">Other Institutional Inquiries</option>
+            <option value="Schedule a Site Visit">Schedule a Site Visit</option>
+            <option value="Price & Brochure Request">Price & Brochure Request</option>
+            <option value="Booking / Purchase Inquiry">Booking / Purchase Inquiry</option>
+            <option value="General Property Inquiry">General Property Inquiry</option>
+            <option value="Commercial Property Inquiry">Commercial Property Inquiry</option>
+            <option value="Partnership / Joint Venture">Builder / Developer Marketing Partnership</option>
+            <option value="Other">Other Inquiry</option>
           </select>
         </div>
 
-        {/* Proposed Location */}
-        <div className="space-y-1.5">
+        {/* Preferred Location or City */}
+        <div className="space-y-1.5 sm:col-span-2">
           <label htmlFor="projectLocation" className="block text-xs font-semibold uppercase tracking-wider text-steel-700">
-            Target Project Location / State
+            Preferred City / Neighborhood
           </label>
           <input
             id="projectLocation"
@@ -255,7 +280,7 @@ export default function ContactForm() {
             type="text"
             value={formData.projectLocation}
             onChange={handleChange}
-            placeholder="e.g. Maharashtra, Southern Corridor"
+            placeholder="e.g. Mumbai, Bengaluru, Hyderabad, or specific neighborhood"
             className="w-full px-4 py-2.5 border border-steel-300 text-sm text-navy-900 placeholder-steel-400 focus:outline-none focus:ring-1 focus:ring-industrial-orange focus:border-industrial-orange"
           />
         </div>
@@ -273,7 +298,7 @@ export default function ContactForm() {
           required
           value={formData.subject}
           onChange={handleChange}
-          placeholder="Brief summary of tender or infrastructure opportunity"
+          placeholder="e.g. Interested in 3 BHK Sea-Facing unit at The Skyview"
           className={`w-full px-4 py-2.5 border text-sm text-navy-900 placeholder-steel-400 focus:outline-none focus:ring-1 focus:ring-industrial-orange focus:border-industrial-orange ${
             errors.subject ? 'border-rose-500 bg-rose-50/20' : 'border-steel-300'
           }`}
@@ -284,16 +309,16 @@ export default function ContactForm() {
       {/* Detailed Message */}
       <div className="space-y-1.5">
         <label htmlFor="message" className="block text-xs font-semibold uppercase tracking-wider text-steel-700">
-          Scope / Project Description <span className="text-rose-500">*</span>
+          Specific Requirements / Message <span className="text-rose-500">*</span>
         </label>
         <textarea
           id="message"
           name="message"
-          rows={5}
+          rows={4}
           required
           value={formData.message}
           onChange={handleChange}
-          placeholder="Provide project overview, anticipated delivery timeline, technical prerequisites, or tender guidelines..."
+          placeholder="Please share your budget range, preferred timeline for site visits, or specific property requirements..."
           className={`w-full px-4 py-2.5 border text-sm text-navy-900 placeholder-steel-400 focus:outline-none focus:ring-1 focus:ring-industrial-orange focus:border-industrial-orange ${
             errors.message ? 'border-rose-500 bg-rose-50/20' : 'border-steel-300'
           }`}
@@ -303,7 +328,7 @@ export default function ContactForm() {
 
       <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
         <p className="text-xs text-steel-500">
-          Confidentiality assured. Data is stored securely and processed exclusively for tender correspondence.
+          Privacy guaranteed. Your contact details are used exclusively for property coordination and advisory.
         </p>
         <button
           type="submit"
@@ -317,12 +342,27 @@ export default function ContactForm() {
             </>
           ) : (
             <>
-              <span>Transmit Inquiry</span>
+              <span>Submit Property Inquiry</span>
               <Send className="w-4 h-4" />
             </>
           )}
         </button>
       </div>
     </form>
+  );
+}
+
+export default function ContactForm(props) {
+  return (
+    <Suspense
+      fallback={
+        <div className="bg-white border border-steel-200 p-8 sm:p-12 text-center text-steel-500 font-mono text-xs shadow-sm flex items-center justify-center gap-2">
+          <Loader2 className="w-4 h-4 animate-spin text-industrial-orange" />
+          <span>Loading property inquiry form...</span>
+        </div>
+      }
+    >
+      <ContactFormContent {...props} />
+    </Suspense>
   );
 }

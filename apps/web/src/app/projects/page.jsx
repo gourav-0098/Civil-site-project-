@@ -1,33 +1,34 @@
 import Link from 'next/link';
-import { Search, Filter, RotateCcw, ChevronLeft, ChevronRight, HardHat } from 'lucide-react';
+import { Search, Filter, RotateCcw, ChevronLeft, ChevronRight, Home, ArrowUpDown } from 'lucide-react';
 import ProjectCard from '../../components/ProjectCard';
-import { getPublicProjects, getCategories } from '../../lib/api';
+import { getPublicProjects } from '../../lib/api';
 
 export const metadata = {
-  title: 'Project Portfolio & Case Studies',
-  description: 'Explore the heavy civil infrastructure project portfolio of Nivara Infrastructure, spanning highways, bridges, rail transit, water networks, and clean energy.'
+  title: 'Property Portfolio | Residential & Commercial Properties For Sale',
+  description: 'Explore residential flats, luxury apartments, gated villas, commercial suites, and plots marketed by Nivara Infrastructure across prime locations.'
 };
 
 export const revalidate = 60;
 
 const CATEGORIES = [
   'All',
-  'Highways & Bridges',
-  'Urban & Transit',
-  'Industrial & Energy',
-  'Commercial Infrastructure',
-  'Water & Utilities'
+  'Residential Flats & Apartments',
+  'Residential Societies & Gated Communities',
+  'Luxury Residences',
+  'Commercial Properties',
+  'Residential Plots'
 ];
 
-const STATUSES = ['All', 'Ongoing', 'Completed', 'Planned', 'On Hold'];
+const STATUSES = ['All', 'Ready to Move', 'Under Construction', 'Upcoming / Pre-Launch'];
 
-export default async function ProjectsPage({ searchParams }) {
+export default async function PropertiesPage({ searchParams }) {
   const currentCategory = searchParams?.category || 'All';
   const currentStatus = searchParams?.status || 'All';
   const currentSearch = searchParams?.search || '';
+  const currentSort = searchParams?.sort || '';
   const currentPage = Math.max(1, parseInt(searchParams?.page, 10) || 1);
 
-  let projects = [];
+  let properties = [];
   let pagination = { total: 0, page: 1, limit: 9, totalPages: 1 };
 
   try {
@@ -35,16 +36,17 @@ export default async function ProjectsPage({ searchParams }) {
       category: currentCategory,
       status: currentStatus,
       search: currentSearch,
+      sort: currentSort,
       page: currentPage,
       limit: 9
     });
 
     if (res?.success) {
-      projects = res.data;
+      properties = res.data;
       pagination = res.pagination;
     }
   } catch (err) {
-    console.warn('API error fetching projects:', err.message);
+    console.warn('API error fetching properties:', err.message);
   }
 
   const buildQuery = (newParams) => {
@@ -53,6 +55,7 @@ export default async function ProjectsPage({ searchParams }) {
       category: currentCategory,
       status: currentStatus,
       search: currentSearch,
+      sort: currentSort,
       page: currentPage,
       ...newParams
     };
@@ -60,13 +63,18 @@ export default async function ProjectsPage({ searchParams }) {
     if (merged.category && merged.category !== 'All') params.set('category', merged.category);
     if (merged.status && merged.status !== 'All') params.set('status', merged.status);
     if (merged.search) params.set('search', merged.search);
+    if (merged.sort) params.set('sort', merged.sort);
     if (merged.page && merged.page > 1) params.set('page', merged.page);
 
     const str = params.toString();
     return str ? `/projects?${str}` : '/projects';
   };
 
-  const hasActiveFilters = currentCategory !== 'All' || currentStatus !== 'All' || currentSearch.trim() !== '';
+  const hasActiveFilters =
+    currentCategory !== 'All' ||
+    currentStatus !== 'All' ||
+    currentSearch.trim() !== '' ||
+    currentSort !== '';
 
   return (
     <div className="bg-steel-50 min-h-screen pb-24">
@@ -75,39 +83,40 @@ export default async function ProjectsPage({ searchParams }) {
         <div className="absolute inset-0 bg-grid-pattern-dark opacity-10 pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-4">
           <div className="inline-flex items-center gap-2 text-xs font-mono text-industrial-orange uppercase tracking-widest">
-            <HardHat className="w-4 h-4" />
-            <span>Infrastructure Portfolio</span>
+            <Home className="w-4 h-4" />
+            <span>Property Portfolio</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-extrabold text-white font-display">
-            Project Directory & Case Studies
+            Explore Properties For Sale
           </h1>
           <p className="text-steel-400 text-sm sm:text-base max-w-2xl leading-relaxed">
-            Detailed technical profiles of ongoing and completed heavy civil infrastructure projects delivered by Nivara Infrastructure across critical corridors.
+            Discover thoughtfully selected residential flats, gated villa societies, luxury penthouses, and commercial office suites marketed by Nivara Infrastructure.
           </p>
         </div>
       </div>
 
-      {/* Filter Bar */}
+      {/* Filter & Search Bar */}
       <div className="sticky top-20 z-30 bg-white border-b border-steel-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-4">
-          {/* Top Filter Controls: Search & Status Dropdown */}
+          {/* Search, Status & Sorting Controls */}
           <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
             {/* Search Input */}
             <form action="/projects" method="GET" className="relative flex-1 max-w-md">
               <input type="hidden" name="category" value={currentCategory} />
               <input type="hidden" name="status" value={currentStatus} />
+              {currentSort && <input type="hidden" name="sort" value={currentSort} />}
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-steel-400" />
               <input
                 type="text"
                 name="search"
                 defaultValue={currentSearch}
-                placeholder="Search projects by title, scope, location..."
+                placeholder="Search by title, location, or developer..."
                 className="w-full pl-10 pr-4 py-2 bg-steel-50 border border-steel-300 text-sm text-navy-900 placeholder-steel-400 focus:outline-none focus:ring-1 focus:ring-industrial-orange focus:border-industrial-orange"
               />
             </form>
 
-            <div className="flex items-center gap-3">
-              {/* Construction Status Dropdown */}
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Construction/Possession Status Filter */}
               <div className="flex items-center gap-2 text-xs font-semibold text-steel-600">
                 <Filter className="w-3.5 h-3.5 text-steel-500" />
                 <span>Status:</span>
@@ -126,6 +135,26 @@ export default async function ProjectsPage({ searchParams }) {
                     </Link>
                   ))}
                 </div>
+              </div>
+
+              {/* Price / Date Sorting */}
+              <div className="flex items-center gap-1.5 text-xs text-steel-600 font-semibold border-l border-steel-200 pl-3">
+                <ArrowUpDown className="w-3.5 h-3.5 text-steel-500" />
+                <select
+                  value={currentSort}
+                  onChange={(e) => {
+                    const newSort = e.target.value;
+                    const url = buildQuery({ sort: newSort, page: 1 });
+                    window.location.href = url;
+                  }}
+                  className="px-2 py-1 bg-white border border-steel-200 text-xs font-medium text-navy-900"
+                >
+                  <option value="">Sort: Featured First</option>
+                  <option value="price_asc">Price: Low to High</option>
+                  <option value="price_desc">Price: High to Low</option>
+                  <option value="title">Alphabetical (A-Z)</option>
+                  <option value="oldest">Oldest Listed</option>
+                </select>
               </div>
 
               {/* Reset Filters */}
@@ -167,24 +196,24 @@ export default async function ProjectsPage({ searchParams }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
         <div className="flex items-center justify-between text-xs text-steel-500 mb-6 font-mono">
           <span>
-            SHOWING {projects.length} OF {pagination.total} PUBLISHED INFRASTRUCTURE PROJECTS
+            SHOWING {properties.length} OF {pagination.total} PUBLISHED PROPERTIES
           </span>
-          {hasActiveFilters && <span>FILTERS APPLIED</span>}
+          {hasActiveFilters && <span>FILTERS ACTIVE</span>}
         </div>
 
-        {projects.length > 0 ? (
+        {properties.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.map(project => (
-              <ProjectCard key={project._id || project.slug} project={project} />
+            {properties.map(property => (
+              <ProjectCard key={property._id || property.slug} project={property} />
             ))}
           </div>
         ) : (
           <div className="bg-white border border-steel-200 p-12 text-center space-y-4 shadow-sm my-8">
             <h3 className="text-xl font-bold text-navy-900 font-display">
-              No matching projects found
+              No matching properties found
             </h3>
             <p className="text-steel-600 text-sm max-w-md mx-auto">
-              No published infrastructure projects match your current filter combination. Try clearing your search term or selecting another category.
+              No published properties match your current search and filter combination. Try clearing your filters or exploring our other property types.
             </p>
             <Link
               href="/projects"

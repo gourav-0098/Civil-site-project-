@@ -2,15 +2,18 @@ import Link from 'next/link';
 import Image from 'next/image';
 import {
   ArrowRight,
-  Shield,
-  Layers,
-  Compass,
-  CheckCircle,
-  HardHat,
+  Search,
+  Building,
+  Home,
+  ShieldCheck,
+  CheckCircle2,
   ChevronRight,
-  Activity,
+  Compass,
+  MapPin,
+  Tag,
+  KeyRound,
   FileCheck2,
-  Workflow
+  Users
 } from 'lucide-react';
 import ProjectCard from '../components/ProjectCard';
 import { getFeaturedProjects } from '../lib/api';
@@ -26,56 +29,60 @@ export default async function HomePage() {
       featuredProjects = res.data;
     }
   } catch (error) {
-    console.warn('Note: Backend API currently starting or unreachable during static build:', error.message);
+    console.warn('Note: Backend API query during page render:', error.message);
   }
 
-  const CAPABILITIES = [
+  const PROPERTY_CATEGORIES = [
     {
-      title: 'Highways & Bridges',
-      description: 'Long-span cable-stayed river crossings, elevated marine viaducts, and high-capacity expressways.',
-      image: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fit=crop&w=800&q=80',
-      href: '/projects?category=Highways+%26+Bridges'
+      title: 'Residential Flats & Apartments',
+      description: 'Thoughtfully planned 2, 3 & 4 BHK apartments in prime connected urban locations.',
+      image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80',
+      href: '/projects?category=Residential+Flats+%26+Apartments',
+      countLabel: 'High-Demand City Units'
     },
     {
-      title: 'Urban & Transit',
-      description: 'Grade-separated semi-high-speed mass transit corridors, elevated stations, and multi-modal freight interchanges.',
-      image: 'https://images.unsplash.com/photo-1590069261209-f8e9b8642343?auto=format&fit=crop&w=800&q=80',
-      href: '/projects?category=Urban+%26+Transit'
+      title: 'Gated Societies & Villas',
+      description: 'Expansive private villas and townhomes surrounded by green parks and community amenities.',
+      image: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=800&q=80',
+      href: '/projects?category=Residential+Societies+%26+Gated+Communities',
+      countLabel: 'Serene Master Enclaves'
     },
     {
-      title: 'Industrial & Energy',
-      description: 'Utility-scale renewable power civil foundations, extra-high-voltage substations, and heavy geotechnical works.',
-      image: 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?auto=format&fit=crop&w=800&q=80',
-      href: '/projects?category=Industrial+%26+Energy'
+      title: 'Luxury Residences & Penthouses',
+      description: 'Bespoke sea-facing penthouses and premium residences with private concierge services.',
+      image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80',
+      href: '/projects?category=Luxury+Residences',
+      countLabel: 'Exclusive Signature Homes'
     },
     {
-      title: 'Water & Utilities',
-      description: 'Large-scale river intake systems, high-capacity water treatment plants, and regional pipeline networks.',
-      image: 'https://images.unsplash.com/photo-1584467735871-8e85353a8413?auto=format&fit=crop&w=800&q=80',
-      href: '/projects?category=Water+%26+Utilities'
+      title: 'Commercial Spaces & Suites',
+      description: 'Grade-A corporate office suites, retail showrooms, and modern business hubs.',
+      image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80',
+      href: '/projects?category=Commercial+Properties',
+      countLabel: 'Prime Business Addresses'
     }
   ];
 
-  const PROCESS_STEPS = [
+  const BUYING_STEPS = [
     {
       step: '01',
-      title: 'Feasibility & Geotechnical',
-      desc: 'Deep geological exploration, hydrodynamic scour assessments, and seismic hazard risk quantification.'
+      title: 'Discover & Shortlist',
+      desc: 'Browse residential and commercial properties matching your preferred location, configuration, and budget.'
     },
     {
       step: '02',
-      title: 'Structural Design & Prefabrication',
-      desc: 'BIM 5D modeling, high-performance concrete mix optimization, and precision off-site segmental casting.'
+      title: 'Guided Site Tours',
+      desc: 'Experience properties firsthand with scheduled walkthroughs, sample flat visits, and neighborhood inspections.'
     },
     {
       step: '03',
-      title: 'Execution & Zero-Harm Protocol',
-      desc: 'Self-launching gantry deployment, rigorous site safety controls, and continuous environmental mitigation.'
+      title: 'Developer Coordination',
+      desc: 'Benefit from transparent information exchange, developer-provided layout plans, pricing clarity, and documentation support.'
     },
     {
       step: '04',
-      title: 'Telemetry & Structural Handover',
-      desc: 'Embedded fiber-optic structural health sensor calibration and lifecycle maintenance documentation.'
+      title: 'Property Acquisition',
+      desc: 'Receive helpful coordination from initial visit request through developer booking and registration milestones.'
     }
   ];
 
@@ -86,112 +93,138 @@ export default async function HomePage() {
         {/* Background Hero Image */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=2000&q=85"
-            alt="Heavy civil infrastructure engineering and bridge construction"
+            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2000&q=85"
+            alt="Modern luxury real estate residence interior and architecture"
             fill
             priority
             className="object-cover object-center opacity-30 mix-blend-luminosity"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-navy-950 via-navy-950/80 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-navy-950 via-navy-950/85 to-transparent" />
           <div className="absolute inset-0 bg-grid-pattern-dark opacity-10" />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
           <div className="max-w-3xl space-y-8">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-navy-900/90 border border-navy-700 text-xs font-mono text-steel-300 tracking-wider uppercase">
               <span className="w-2 h-2 rounded-full bg-industrial-orange animate-pulse" />
-              <span>Heavy Civil Engineering & Infrastructure Delivery</span>
+              <span>Real Estate Marketing & Property Sales</span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white font-display leading-[1.1]">
-              Engineering Infrastructure. <br />
-              <span className="text-industrial-orange">Building Tomorrow.</span>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white font-display leading-[1.15]">
+              Find a Place <br />
+              <span className="text-industrial-orange">You’ll Love to Call Home.</span>
             </h1>
 
             <p className="text-lg sm:text-xl text-steel-300 leading-relaxed font-light">
-              Nivara Infrastructure delivers considered engineering and construction solutions for the infrastructure that moves communities and industries forward.
+              Explore thoughtfully selected residential and commercial properties, discover the right community, and connect with us to take your next step.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2">
               <Link
                 href="/projects"
                 className="inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-industrial-orange hover:bg-industrial-orangeHover text-white text-sm font-semibold tracking-wide transition-all shadow-lg shadow-industrial-orange/20"
               >
-                <span>Explore Our Projects</span>
+                <span>Explore Properties</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 href="/contact"
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-navy-900/80 hover:bg-navy-800 border border-steel-700 text-white text-sm font-semibold tracking-wide transition-colors"
               >
-                <span>Discuss a Project</span>
+                <span>Talk to Our Team</span>
               </Link>
             </div>
+
+            {/* Quick Property Search Bar */}
+            <form
+              action="/projects"
+              method="GET"
+              className="p-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-none flex flex-col sm:flex-row gap-2 max-w-2xl shadow-2xl"
+            >
+              <div className="flex-1 flex items-center px-3 py-2 bg-white text-navy-900">
+                <Search className="w-4 h-4 text-steel-400 shrink-0 mr-2" />
+                <input
+                  type="text"
+                  name="search"
+                  placeholder="Search by city, property name, or builder..."
+                  className="w-full text-xs sm:text-sm placeholder-steel-400 focus:outline-none bg-transparent"
+                />
+              </div>
+              <button
+                type="submit"
+                className="px-6 py-2.5 bg-industrial-orange hover:bg-industrial-orangeHover text-white text-xs font-bold uppercase tracking-wider transition-colors shrink-0"
+              >
+                Search Listings
+              </button>
+            </form>
           </div>
         </div>
 
-        {/* Industrial Status Bar */}
-        <div className="absolute bottom-0 inset-x-0 bg-navy-900/80 border-t border-navy-800 py-3 hidden md:block">
+        {/* Identity & Compliance Note Bar */}
+        <div className="absolute bottom-0 inset-x-0 bg-navy-900/90 border-t border-navy-800 py-3 hidden md:block">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between text-xs font-mono text-steel-400">
-            <span>SECTOR FOCUS: TRANSPORT • ENERGY • WATER • URBAN TRANSIT</span>
-            <span>SPECIFICATION STANDARD: IRC • IS • AASHTO • BS EN</span>
-            <span>SYSTEM HEALTH: MONITORED</span>
+            <span>PORTFOLIO: FLATS • VILLAS • PENTHOUSES • COMMERCIAL • PLOTS</span>
+            <span>ROLE: REAL ESTATE MARKETING & SALES FACILITATION</span>
+            <span>MARKETED BY: NIVARA INFRASTRUCTURE</span>
           </div>
         </div>
       </section>
 
-      {/* 2. CAPABILITIES & SECTORS */}
+      {/* 2. PROPERTY CATEGORIES GRID */}
       <section className="py-20 lg:py-28 bg-steel-100 border-b border-steel-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
             <div className="space-y-3 max-w-2xl">
               <span className="text-xs font-mono font-semibold text-industrial-orange uppercase tracking-widest">
-                Core Sectors
+                Property Portfolio
               </span>
               <h2 className="text-3xl sm:text-4xl font-extrabold text-navy-900 font-display">
-                Engineering Capabilities Across Critical Sectors
+                Explore Diverse Real Estate Categories
               </h2>
               <p className="text-steel-600 text-sm leading-relaxed">
-                From high-load marine crossings to deep utility systems, our multidisciplinary teams integrate specialized equipment with geotechnical acumen.
+                Whether you seek a modern high-rise flat, an independent gated villa, or high-yield commercial property, our team helps connect you with vetted opportunities.
               </p>
             </div>
             <Link
-              href="/services"
+              href="/projects"
               className="inline-flex items-center gap-2 text-sm font-bold text-navy-900 hover:text-industrial-orange uppercase tracking-wider transition-colors shrink-0"
             >
-              <span>View All Services</span>
+              <span>View All Properties</span>
               <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {CAPABILITIES.map((cap, idx) => (
+            {PROPERTY_CATEGORIES.map((cat, idx) => (
               <Link
                 key={idx}
-                href={cap.href}
+                href={cat.href}
                 className="group relative flex flex-col bg-white border border-steel-200 overflow-hidden hover:border-industrial-orange hover:shadow-xl transition-all duration-300"
               >
                 <div className="relative aspect-[4/3] w-full overflow-hidden bg-steel-200">
                   <Image
-                    src={cap.image}
-                    alt={cap.title}
+                    src={cat.image}
+                    alt={cat.title}
                     fill
                     sizes="(max-width: 768px) 100vw, 25vw"
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-navy-950/30 group-hover:bg-navy-950/10 transition-colors" />
+                  <div className="absolute inset-0 bg-navy-950/20 group-hover:bg-navy-950/10 transition-colors" />
                 </div>
                 <div className="p-6 flex flex-col flex-1 justify-between">
                   <div className="space-y-2">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-steel-400">
+                      {cat.countLabel}
+                    </span>
                     <h3 className="text-lg font-bold text-navy-900 group-hover:text-industrial-orange transition-colors font-display">
-                      {cap.title}
+                      {cat.title}
                     </h3>
                     <p className="text-xs text-steel-600 leading-relaxed">
-                      {cap.description}
+                      {cat.description}
                     </p>
                   </div>
                   <div className="pt-4 flex items-center gap-1 text-xs font-bold text-industrial-orange">
-                    <span>Explore Sector</span>
+                    <span>Explore Listings</span>
                     <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
@@ -201,26 +234,26 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 3. FEATURED PROJECTS PORTFOLIO */}
+      {/* 3. FEATURED PROPERTIES PORTFOLIO */}
       <section className="py-20 lg:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
             <div className="space-y-3 max-w-2xl">
               <span className="text-xs font-mono font-semibold text-industrial-orange uppercase tracking-widest">
-                Portfolio Showcase
+                Curated Inventory
               </span>
               <h2 className="text-3xl sm:text-4xl font-extrabold text-navy-900 font-display">
-                Featured Infrastructure Projects
+                Featured Properties For Sale
               </h2>
               <p className="text-steel-600 text-sm leading-relaxed">
-                Representative civil construction archetypes engineered with rigorous structural tolerances and modern segmental construction techniques.
+                Handpicked residential and commercial projects marketed by Nivara Infrastructure in partnership with reputable builders and developers.
               </p>
             </div>
             <Link
               href="/projects"
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-navy-900 hover:bg-navy-800 text-white text-xs font-semibold tracking-wider uppercase transition-colors shrink-0"
             >
-              <span>View Full Directory</span>
+              <span>Explore All Listings</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -234,36 +267,91 @@ export default async function HomePage() {
           ) : (
             <div className="p-12 bg-steel-50 border border-steel-200 text-center space-y-4">
               <p className="text-steel-600 text-sm">
-                Project portfolio records are currently being indexed. Explore the complete projects directory to review ongoing and completed infrastructure.
+                Property listings are currently loading. Browse the complete properties directory to explore available homes and commercial suites.
               </p>
               <Link
                 href="/projects"
                 className="inline-block px-6 py-2.5 bg-industrial-orange text-white text-xs font-semibold tracking-wider uppercase"
               >
-                Browse Projects
+                Browse Properties
               </Link>
             </div>
           )}
         </div>
       </section>
 
-      {/* 4. PROJECT DELIVERY APPROACH */}
-      <section className="py-20 lg:py-28 bg-navy-900 text-white border-t border-navy-800">
+      {/* 4. WHY BUYERS CONTACT NIVARA */}
+      <section className="py-20 bg-steel-50 border-y border-steel-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl mb-14 space-y-3">
+            <span className="text-xs font-mono font-semibold text-industrial-orange uppercase tracking-widest">
+              Property Marketing
+            </span>
+            <h2 className="text-3xl font-extrabold text-navy-900 font-display">
+              Why Buyers & Investors Choose Nivara
+            </h2>
+            <p className="text-steel-600 text-sm leading-relaxed">
+              We assist property buyers with clear property information and structured site visit coordination with developers.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="p-8 bg-white border border-steel-200 space-y-4">
+              <div className="w-12 h-12 bg-industrial-orange/10 text-industrial-orange flex items-center justify-center">
+                <ShieldCheck className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-navy-900 font-display">
+                Carefully Curated Projects
+              </h3>
+              <p className="text-xs text-steel-600 leading-relaxed">
+                We market projects developed by established builders with documented track records, clear statutory approvals, and transparent construction timelines.
+              </p>
+            </div>
+
+            <div className="p-8 bg-white border border-steel-200 space-y-4">
+              <div className="w-12 h-12 bg-industrial-orange/10 text-industrial-orange flex items-center justify-center">
+                <Compass className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-navy-900 font-display">
+                Personalized Site Walkthroughs
+              </h3>
+              <p className="text-xs text-steel-600 leading-relaxed">
+                Enjoy hassle-free property viewing coordination. Our advisors arrange on-ground visits, review layout orientations, and answer your practical queries.
+              </p>
+            </div>
+
+            <div className="p-8 bg-white border border-steel-200 space-y-4">
+              <div className="w-12 h-12 bg-industrial-orange/10 text-industrial-orange flex items-center justify-center">
+                <FileCheck2 className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-navy-900 font-display">
+                Transparent Information
+              </h3>
+              <p className="text-xs text-steel-600 leading-relaxed">
+                Clear information without fabricated claims. We provide builder specifications, floor plans, and pricing guidance to facilitate informed decisions.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. 4-STEP BUYING ASSISTANCE PROCESS */}
+      <section className="py-20 lg:py-28 bg-navy-900 text-white border-b border-navy-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mb-16 space-y-3">
             <span className="text-xs font-mono font-semibold text-industrial-orange uppercase tracking-widest">
-              Execution Methodology
+              Seamless Journey
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white font-display">
-              Disciplined Engineering & Project Delivery
+              A Simple, Guided Property Buying Process
             </h2>
             <p className="text-steel-400 text-sm leading-relaxed">
-              Every infrastructure asset follows an unbroken chain of custody from initial soil borehole validation to final telemetry calibration.
+              From your initial property search to getting keys in hand, Nivara Infrastructure assists you every step of the way.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {PROCESS_STEPS.map((item, idx) => (
+            {BUYING_STEPS.map((item, idx) => (
               <div key={idx} className="relative p-6 bg-navy-950 border border-navy-800 space-y-4">
                 <span className="text-3xl font-extrabold text-industrial-orange font-mono">
                   {item.step}
@@ -280,75 +368,32 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 5. QUALITY & SAFETY PILLARS */}
-      <section className="py-20 bg-steel-50 border-b border-steel-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="p-8 bg-white border border-steel-200 space-y-4">
-              <div className="w-12 h-12 bg-industrial-orange/10 text-industrial-orange flex items-center justify-center">
-                <HardHat className="w-6 h-6" />
-              </div>
-              <h3 className="text-xl font-bold text-navy-900 font-display">
-                Zero-Incident Culture
-              </h3>
-              <p className="text-xs text-steel-600 leading-relaxed">
-                Mandatory daily safety toolbox protocols, continuous hazard identification, and automated machinery proximity sensors across all active work sites.
-              </p>
-            </div>
-
-            <div className="p-8 bg-white border border-steel-200 space-y-4">
-              <div className="w-12 h-12 bg-industrial-orange/10 text-industrial-orange flex items-center justify-center">
-                <FileCheck2 className="w-6 h-6" />
-              </div>
-              <h3 className="text-xl font-bold text-navy-900 font-display">
-                Material Integrity Testing
-              </h3>
-              <p className="text-xs text-steel-600 leading-relaxed">
-                On-site NABL-calibrated batching plant laboratories verifying 28-day concrete compressive strengths, ultrasonic steel weld flaw tests, and rebar elasticity.
-              </p>
-            </div>
-
-            <div className="p-8 bg-white border border-steel-200 space-y-4">
-              <div className="w-12 h-12 bg-industrial-orange/10 text-industrial-orange flex items-center justify-center">
-                <Activity className="w-6 h-6" />
-              </div>
-              <h3 className="text-xl font-bold text-navy-900 font-display">
-                Structural Telemetry
-              </h3>
-              <p className="text-xs text-steel-600 leading-relaxed">
-                Integration of fiber-optic Bragg grating sensors within critical deck spans to monitor real-time thermal expansion, vibration frequencies, and scour depth.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* 6. CLOSING CTA BANNER */}
       <section className="py-20 bg-navy-950 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-pattern-dark opacity-10 pointer-events-none" />
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
           <span className="text-xs font-mono font-semibold text-industrial-orange uppercase tracking-widest">
-            Partner With Nivara Infrastructure
+            Connect With Our Property Advisors
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold font-display leading-tight">
-            Ready to Build Durable Infrastructure for the Next Generation?
+            Ready to Discover Your Next Home or Commercial Investment?
           </h2>
           <p className="text-steel-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            Submit your project brief, RFP, or tender inquiries to our engineering estimation desk. We review specifications and provide rigorous pre-qualification evaluations.
+            Reach out to our property marketing desk to schedule personalized site visits, review detailed brochures, and discuss your preferred locations.
           </p>
           <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/contact"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-industrial-orange hover:bg-industrial-orangeHover text-white text-sm font-semibold tracking-wide transition-all shadow-lg"
             >
-              <span>Transmit Project Inquiry</span>
+              <span>Schedule a Site Visit</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
               href="/projects"
               className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 bg-navy-900 border border-steel-700 hover:border-steel-500 text-white text-sm font-semibold tracking-wide transition-colors"
             >
-              <span>Review Portfolio Case Studies</span>
+              <span>Browse All Properties</span>
             </Link>
           </div>
         </div>

@@ -49,6 +49,7 @@ export async function listAdminProjects(req, res, next) {
       query.$or = [
         { title: { $regex: term, $options: 'i' } },
         { location: { $regex: term, $options: 'i' } },
+        { developerName: { $regex: term, $options: 'i' } },
         { slug: { $regex: term, $options: 'i' } }
       ];
     }
@@ -110,6 +111,13 @@ export async function getAdminProjectById(req, res, next) {
 export async function createProject(req, res, next) {
   try {
     const data = req.body;
+    if (data.publicationStatus === 'Published' && (!data.coverImage?.url || !data.coverImage.url.trim())) {
+      return res.status(400).json({
+        success: false,
+        error: 'Cannot publish property without a valid cover image'
+      });
+    }
+
     const slug = await generateUniqueSlug(data.slug || data.title);
 
     const project = new Project({
@@ -164,6 +172,15 @@ export async function updateProject(req, res, next) {
     }
 
     const data = req.body;
+    const targetStatus = data.publicationStatus || existing.publicationStatus;
+    const targetCoverUrl = data.coverImage?.url !== undefined ? data.coverImage.url : existing.coverImage?.url;
+    if (targetStatus === 'Published' && (!targetCoverUrl || !targetCoverUrl.trim())) {
+      return res.status(400).json({
+        success: false,
+        error: 'Cannot publish property without a valid cover image'
+      });
+    }
+
     const oldSlug = existing.slug;
     let newSlug = oldSlug;
 
@@ -220,6 +237,13 @@ export async function setPublicationStatus(req, res, next) {
     }
 
     const newStatus = status || (project.publicationStatus === 'Published' ? 'Draft' : 'Published');
+    if (newStatus === 'Published' && (!project.coverImage?.url || !project.coverImage.url.trim())) {
+      return res.status(400).json({
+        success: false,
+        error: 'Cannot publish property without a valid cover image'
+      });
+    }
+
     project.publicationStatus = newStatus;
     project.updatedBy = req.user._id;
     await project.save();

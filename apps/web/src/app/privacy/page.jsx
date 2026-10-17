@@ -1,6 +1,6 @@
 export const metadata = {
   title: 'Privacy Policy | Nivara Infrastructure',
-  description: 'Privacy policy and data governance practices for Nivara Infrastructure corporate communications.'
+  description: 'Privacy policy and data governance practices for Nivara Infrastructure property marketing and buyer advisory services.'
 };
 
 export default function PrivacyPage() {
@@ -15,7 +15,7 @@ export default function PrivacyPage() {
             Privacy Policy
           </h1>
           <p className="text-xs text-steel-500 font-mono">
-            Effective Date: January 1, 2026 • Document Version 1.2
+            Effective Date: January 1, 2026 • Document Version 2.0 (Real Estate Marketing)
           </p>
         </div>
 
@@ -25,10 +25,10 @@ export default function PrivacyPage() {
               1. Overview & Information Collection
             </h2>
             <p>
-              Nivara Infrastructure (&quot;Nivara&quot;, &quot;we&quot;, &quot;us&quot;) respects the privacy of corporate visitors, public-sector stakeholders, and tender respondents. This Privacy Policy outlines how we collect, store, and process information submitted through our public website and inquiry portal.
+              Nivara Infrastructure (&quot;Nivara&quot;, &quot;we&quot;, &quot;us&quot;) respects the privacy of prospective homebuyers, commercial property seekers, and developer partners. This Privacy Policy outlines how we collect, store, and process information submitted through our public website, property inquiry forms, and viewing appointment requests.
             </p>
             <p>
-              We collect information provided directly by you when submitting an inquiry or project tender brief, including your name, work email address, telephone contact number, employer organization, and project details.
+              We collect information provided directly by you when submitting an inquiry or scheduling a property site visit, including your name, email address, telephone contact number, preferred location, and property interests.
             </p>
           </section>
 
@@ -40,19 +40,19 @@ export default function PrivacyPage() {
               Information submitted to Nivara Infrastructure is used exclusively for:
             </p>
             <ul className="list-disc pl-5 space-y-1 text-xs">
-              <li>Evaluating prospective project tenders, contracts, and joint-venture inquiries.</li>
-              <li>Responding to prequalification queries and engineering RFPs.</li>
-              <li>Internal operational record-keeping and audit tracking.</li>
-              <li>Ensuring network security and preventing automated spam submissions.</li>
+              <li>Coordinating personalized property walkthroughs, sample flat inspections, and developer meetings.</li>
+              <li>Providing requested property brochures, price ranges, and floor plan documentation.</li>
+              <li>Internal operational record-keeping, customer support, and advisory communication.</li>
+              <li>Protecting our services from automated spam, abuse, and fraudulent inquiries.</li>
             </ul>
           </section>
 
           <section className="space-y-3">
             <h2 className="text-xl font-bold text-navy-900 font-display">
-              3. Data Retention and Security
+              3. Data Retention, Security & Non-Disclosure
             </h2>
             <p>
-              We implement industry-standard encryption, strict access controls, and server-side authorization boundaries to protect all collected data. Inquiries and tender submissions are accessible exclusively to authorized commercial estimating officers. We never sell, rent, or trade corporate inquiry data to third parties.
+              We implement industry-standard encryption, strict access controls, and server-side authorization boundaries to protect your contact details. We never sell, rent, or trade customer contact details to third-party telemarketers or external advertising networks.
             </p>
           </section>
 

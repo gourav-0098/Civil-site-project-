@@ -22,7 +22,9 @@ export async function submitInquiry(req, res, next) {
       email: data.email,
       phone: data.phone || '',
       organization: data.organization || '',
-      inquiryType: data.inquiryType,
+      propertyId: data.propertyId || null,
+      propertyTitle: data.propertyTitle || '',
+      inquiryType: data.inquiryType || 'General Property Inquiry',
       projectLocation: data.projectLocation || '',
       subject: data.subject,
       message: data.message,
@@ -33,7 +35,7 @@ export async function submitInquiry(req, res, next) {
 
     res.status(201).json({
       success: true,
-      message: 'Thank you. Your inquiry has been transmitted to Nivara Infrastructure project desk.',
+      message: 'Thank you. Your inquiry has been transmitted to the Nivara Infrastructure property advisory team.',
       data: {
         id: inquiry._id,
         createdAt: inquiry.createdAt

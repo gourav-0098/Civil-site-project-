@@ -15,14 +15,21 @@ export const inquirySchema = z.object({
   email: z.string().email('Please provide a valid email address').max(150),
   phone: z.string().max(30).optional().default(''),
   organization: z.string().max(150).optional().default(''),
+  propertyId: z.string().optional().default(''),
+  propertyTitle: z.string().max(200).optional().default(''),
   inquiryType: z.enum([
+    'Schedule a Site Visit',
+    'Price & Brochure Request',
+    'Booking / Purchase Inquiry',
+    'General Property Inquiry',
+    'Commercial Property Inquiry',
     'Project Tender / RFP',
     'General Construction Inquiry',
     'Partnership / Joint Venture',
     'Vendor / Subcontractor',
     'Careers',
     'Other'
-  ]).default('General Construction Inquiry'),
+  ]).default('General Property Inquiry'),
   projectLocation: z.string().max(150).optional().default(''),
   subject: z.string().trim().min(3, 'Subject must be at least 3 characters').max(200),
   message: z.string().trim().min(10, 'Message must be at least 10 characters').max(5000),
@@ -30,47 +37,52 @@ export const inquirySchema = z.object({
 });
 
 export const projectSchema = z.object({
-  title: z.string().trim().min(1, 'Project title is required').max(200),
+  title: z.string().trim().min(1, 'Property name is required').max(200),
   slug: z.string().trim().optional(),
   clientName: z.string().trim().max(150).optional().default(''),
-  category: z.string().trim().min(1, 'Category is required').default('Highways & Bridges'),
-  location: z.string().trim().min(1, 'Location is required').default('Regional Infrastructure Corridor'),
-  constructionStatus: z.enum(['Planned', 'Ongoing', 'Completed', 'On Hold']).default('Ongoing'),
+  developerName: z.string().trim().max(150).optional().default(''),
+  category: z.string().trim().min(1, 'Category is required'),
+  location: z.string().trim().min(1, 'Location is required'),
+  price: z.string().trim().optional().default(''),
+  priceNumeric: z.number().optional().default(0),
+  configuration: z.string().trim().optional().default(''),
+  area: z.string().trim().optional().default(''),
+  amenities: z.array(z.string().trim()).default([]).transform(items => items.filter(Boolean)),
+  reraId: z.string().trim().optional().default(''),
+  possessionDate: z.string().trim().optional().default(''),
+  constructionStatus: z.enum([
+    'Ready to Move',
+    'Under Construction',
+    'Upcoming / Pre-Launch',
+    'Ongoing',
+    'Completed',
+    'Planned',
+    'On Hold'
+  ]).default('Under Construction'),
   publicationStatus: z.enum(['Draft', 'Published']).default('Draft'),
   archiveStatus: z.enum(['Active', 'Archived']).default('Active'),
   isFeatured: z.boolean().default(false),
+  isDemo: z.boolean().default(false),
   timeline: z.object({
     startDate: z.union([z.string(), z.date(), z.null()]).optional(),
     estimatedCompletionDate: z.union([z.string(), z.date(), z.null()]).optional(),
     completionDate: z.union([z.string(), z.date(), z.null()]).optional()
   }).optional().default({}),
-  shortDescription: z.string().trim().optional().default('').transform(val => {
-    return (val && val.trim().length >= 5)
-      ? val.trim()
-      : 'Comprehensive heavy civil infrastructure engineering and construction project delivered to global standards.';
-  }),
-  fullDescription: z.string().trim().optional().default('').transform(val => {
-    return (val && val.trim().length >= 10)
-      ? val.trim()
-      : 'Detailed technical documentation and engineering execution specifications for this heavy civil infrastructure asset.';
-  }),
+  shortDescription: z.string().trim().optional().default(''),
+  fullDescription: z.string().trim().optional().default(''),
   scopeOfWork: z.array(z.string().trim()).default([]).transform(items => items.filter(Boolean)),
   specifications: z.array(z.object({
     label: z.string().trim(),
     value: z.string().trim()
   })).default([]).transform(items => items.filter(item => item && item.label && item.value)),
   coverImage: z.object({
-    url: z.string().trim().optional().default('').transform(val => {
-      return (val && val.trim().length > 0)
-        ? val.trim()
-        : 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fit=crop&w=1600&q=80';
-    }),
+    url: z.string().trim().optional().default(''),
     publicId: z.string().optional().default(''),
-    alt: z.string().optional().default('Civil infrastructure engineering project'),
+    alt: z.string().optional().default(''),
     caption: z.string().optional().default('')
   }).default({
-    url: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fit=crop&w=1600&q=80',
-    alt: 'Civil infrastructure engineering project'
+    url: '',
+    alt: ''
   }),
   gallery: z.array(z.object({
     url: z.string().trim().optional().default(''),

@@ -330,4 +330,123 @@ describe('Nivara Infrastructure API Integration Tests', () => {
       expect(res.body.data.apiSecret).toBeUndefined();
     });
   });
+
+  describe('5. Real Estate Property Marketing & Sales Features', () => {
+    let propertyId = '';
+    const propertySlug = 'test-azure-heights-residences';
+
+    it('Admin can create a real estate property listing with developer attribution and pricing', async () => {
+      const res = await request(app)
+        .post('/api/v1/admin/projects')
+        .set('Cookie', superadminCookie)
+        .send({
+          title: 'Test Azure Heights Residences',
+          slug: propertySlug,
+          category: 'Residential Flats & Apartments',
+          location: 'Bandra West, Mumbai',
+          developerName: 'Azure Skyline Developers Ltd.',
+          price: '₹2.75 Cr – ₹4.50 Cr',
+          priceNumeric: 27500000,
+          configuration: '3 & 4 BHK Luxury Apartments',
+          area: '1,850 – 2,900 sq.ft.',
+          amenities: ['Clubhouse', 'Swimming Pool', 'Covered Parking', '24/7 Security'],
+          reraId: 'P51800099887',
+          possessionDate: 'Ready to Move',
+          constructionStatus: 'Ready to Move',
+          publicationStatus: 'Published',
+          shortDescription: 'Modern sea-view apartments in Bandra West marketed by Nivara Infrastructure.',
+          fullDescription: 'Detailed architectural overview of Azure Heights Residences developed by Azure Skyline Developers.',
+          coverImage: {
+            url: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00',
+            alt: 'Azure Heights Residences'
+          }
+        });
+
+      expect(res.status).toBe(201);
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.developerName).toBe('Azure Skyline Developers Ltd.');
+      expect(res.body.data.price).toBe('₹2.75 Cr – ₹4.50 Cr');
+      expect(res.body.data.amenities).toHaveLength(4);
+      propertyId = res.body.data._id;
+    });
+
+    it('Public endpoint returns real estate fields and allows search by developer name', async () => {
+      const res = await request(app).get('/api/v1/projects?search=Azure+Skyline');
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.length).toBeGreaterThan(0);
+
+      const found = res.body.data.find(p => p.slug === propertySlug);
+      expect(found).toBeDefined();
+      expect(found.developerName).toBe('Azure Skyline Developers Ltd.');
+      expect(found.price).toBe('₹2.75 Cr – ₹4.50 Cr');
+      expect(found.configuration).toBe('3 & 4 BHK Luxury Apartments');
+    });
+
+    it('Public user can submit an inquiry associated with a specific property', async () => {
+      const res = await request(app)
+        .post('/api/v1/inquiries')
+        .send({
+          name: 'Pooja Mehta',
+          email: 'pooja.mehta@example.com',
+          phone: '+91 99887 76655',
+          propertyId: propertyId,
+          propertyTitle: 'Test Azure Heights Residences',
+          inquiryType: 'Schedule a Site Visit',
+          subject: 'Site visit request for 3 BHK unit',
+          message: 'Would like to schedule a viewing this coming Saturday afternoon.'
+        });
+
+      expect(res.status).toBe(201);
+      expect(res.body.success).toBe(true);
+      expect(res.body.message).toContain('property advisory team');
+    });
+
+    it('Admin can view the property-linked inquiry in the inquiry inbox', async () => {
+      const res = await request(app)
+        .get('/api/v1/admin/inquiries?search=Pooja+Mehta')
+        .set('Cookie', superadminCookie);
+
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
+      const inq = res.body.data.find(i => i.email === 'pooja.mehta@example.com');
+      expect(inq).toBeDefined();
+      expect(inq.propertyTitle).toBe('Test Azure Heights Residences');
+      expect(inq.inquiryType).toBe('Schedule a Site Visit');
+    });
+
+    it('Admin cannot publish a property without a cover image', async () => {
+      const res = await request(app)
+        .post('/api/v1/admin/projects')
+        .set('Cookie', superadminCookie)
+        .send({
+          title: 'Test Imageless Property',
+          category: 'Residential Flats & Apartments',
+          location: 'Test City',
+          publicationStatus: 'Published',
+          coverImage: { url: '' }
+        });
+
+      expect(res.status).toBe(400);
+      expect(res.body.success).toBe(false);
+      expect(res.body.error).toContain('Cannot publish property without a valid cover image');
+    });
+
+    it('Public single project response protects internal administrative fields', async () => {
+      const res = await request(app).get(`/api/v1/projects/${propertySlug}`);
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.createdBy).toBeUndefined();
+      expect(res.body.data.updatedBy).toBeUndefined();
+    });
+
+    it('Cleanup: Superadmin removes test property', async () => {
+      const res = await request(app)
+        .delete(`/api/v1/admin/projects/${propertyId}`)
+        .set('Cookie', superadminCookie);
+
+      expect(res.status).toBe(200);
+      await Inquiry.deleteMany({ email: 'pooja.mehta@example.com' });
+    });
+  });
 });
