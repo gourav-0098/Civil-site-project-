@@ -22,7 +22,6 @@ import {
   Maximize2
 } from 'lucide-react';
 import Link from 'next/link';
-import { compressImageBeforeUpload, formatBytes } from '../../lib/clientImageCompressor';
 
 const COMMON_AMENITIES = [
   '24/7 Security & CCTV',
@@ -207,13 +206,13 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
     }));
   };
 
-  // Direct signed Cloudinary upload helper (with browser-native image compression)
+  // Direct signed Cloudinary upload helper (preserves 100% original master quality)
   const handleDirectUpload = async (e, targetField = 'cover') => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
 
     setUploading(true);
-    setUploadProgress({ current: 0, total: files.length, status: `Preparing ${files.length} file(s)...` });
+    setUploadProgress({ current: 0, total: files.length, status: `Preparing upload...` });
     setError('');
 
     try {
@@ -231,21 +230,11 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
       const { timestamp, signature, apiKey, cloudName, folder } = sigData.data;
 
       if (targetField === 'cover') {
-        const rawFile = files[0];
-        setUploadProgress({ current: 0, total: 1, status: `Compressing cover image (${formatBytes(rawFile.size)})...` });
-
-        // In-browser compression before network transfer
-        const { file: uploadFile, originalSize, compressedSize, wasCompressed, reductionPercent } =
-          await compressImageBeforeUpload(rawFile);
-
-        const statusMsg = wasCompressed
-          ? `Uploading compressed cover (${formatBytes(originalSize)} → ${formatBytes(compressedSize)}, -${reductionPercent}%)...`
-          : `Uploading cover (${formatBytes(uploadFile.size)})...`;
-
-        setUploadProgress({ current: 1, total: 1, status: statusMsg });
+        const file = files[0];
+        setUploadProgress({ current: 1, total: 1, status: `Uploading original master cover (${file.name})...` });
 
         const uploadForm = new FormData();
-        uploadForm.append('file', uploadFile);
+        uploadForm.append('file', file);
         uploadForm.append('api_key', apiKey);
         uploadForm.append('timestamp', timestamp);
         uploadForm.append('signature', signature);
@@ -264,42 +253,28 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
               ...prev.coverImage,
               url: cloudData.secure_url,
               publicId: cloudData.public_id,
-              alt: rawFile.name
+              alt: file.name
             }
           }));
         } else {
           throw new Error(cloudData.error?.message || 'Cloudinary upload rejected');
         }
       } else {
-        // Multi-image batch upload for gallery directly to Cloudinary with progressive compression
+        // Multi-image batch upload for gallery directly to Cloudinary in original master quality
         const uploadedItems = [];
         let completed = 0;
 
         for (let i = 0; i < files.length; i++) {
-          const rawFile = files[i];
+          const file = files[i];
 
           setUploadProgress({
             current: i + 1,
             total: files.length,
-            status: `Compressing image ${i + 1} of ${files.length} (${formatBytes(rawFile.size)})...`
-          });
-
-          // In-browser compression before network transfer
-          const { file: uploadFile, originalSize, compressedSize, wasCompressed, reductionPercent } =
-            await compressImageBeforeUpload(rawFile);
-
-          const statusMsg = wasCompressed
-            ? `Uploading ${i + 1}/${files.length} (${formatBytes(originalSize)} → ${formatBytes(compressedSize)}, -${reductionPercent}%)...`
-            : `Uploading ${i + 1}/${files.length} (${formatBytes(uploadFile.size)})...`;
-
-          setUploadProgress({
-            current: i + 1,
-            total: files.length,
-            status: statusMsg
+            status: `Uploading original master image ${i + 1} of ${files.length} (${file.name})...`
           });
 
           const uploadForm = new FormData();
-          uploadForm.append('file', uploadFile);
+          uploadForm.append('file', file);
           uploadForm.append('api_key', apiKey);
           uploadForm.append('timestamp', timestamp);
           uploadForm.append('signature', signature);
@@ -315,12 +290,12 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
             uploadedItems.push({
               url: cloudData.secure_url,
               publicId: cloudData.public_id,
-              alt: rawFile.name,
+              alt: file.name,
               caption: '',
               order: (formData.gallery?.length || 0) + uploadedItems.length + 1
             });
           } else {
-            console.warn(`Failed to upload ${rawFile.name}:`, cloudData.error?.message);
+            console.warn(`Failed to upload ${file.name}:`, cloudData.error?.message);
           }
           completed++;
         }

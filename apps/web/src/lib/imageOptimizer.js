@@ -12,8 +12,8 @@ export const IMAGE_PRESETS = {
   medium: { width: 1024, quality: 75 },
   // Detail page hero cover and landing page hero banner (~250-380 KB)
   hero: { width: 1920, quality: 80 },
-  // High-resolution Lightbox viewer for detailed zoom (~350-500 KB)
-  lightbox: { width: 2048, quality: 85 }
+  // Untouched original master file
+  original: { original: true }
 };
 
 /**
@@ -21,11 +21,12 @@ export const IMAGE_PRESETS = {
  * for Unsplash and Cloudinary assets.
  *
  * @param {string} url - Original image URL
- * @param {Object} options - { width, quality, format }
+ * @param {Object} options - { width, quality, format } or { original: true }
  * @returns {string} - Optimized CDN URL
  */
 export function getOptimizedImageUrl(url, options = IMAGE_PRESETS.thumbnail) {
   if (!url || typeof url !== 'string') return '';
+  if (options?.original || options === 'original') return url;
 
   const { width = 640, quality = 75, format = 'auto' } = options;
 

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Maximize2, ExternalLink } from 'lucide-react';
 import { getOptimizedImageUrl, IMAGE_PRESETS } from '../lib/imageOptimizer';
 
 export default function LightboxGallery({ items = [], title = 'Project Gallery' }) {
@@ -98,13 +98,25 @@ export default function LightboxGallery({ items = [], title = 'Project Gallery' 
                   {title} • {selectedIndex + 1} / {items.length}
                 </span>
               </div>
-              <button
-                onClick={handleClose}
-                className="p-2 hover:bg-navy-900 text-steel-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-industrial-orange"
-                aria-label="Close lightbox"
-              >
-                <X className="w-6 h-6" />
-              </button>
+              <div className="flex items-center gap-2">
+                <a
+                  href={items[selectedIndex].url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-2.5 py-1.5 hover:bg-navy-900 text-steel-300 hover:text-white transition-colors focus:outline-none flex items-center gap-1.5 text-xs font-mono border border-navy-700/60"
+                  title="Open full-resolution master in a new tab"
+                >
+                  <ExternalLink className="w-3.5 h-3.5 text-industrial-orange" />
+                  <span className="hidden sm:inline">Original Master</span>
+                </a>
+                <button
+                  onClick={handleClose}
+                  className="p-2 hover:bg-navy-900 text-steel-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-industrial-orange"
+                  aria-label="Close lightbox"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
             </div>
 
             {/* Main Image View */}
@@ -118,7 +130,7 @@ export default function LightboxGallery({ items = [], title = 'Project Gallery' 
                   transition={{ duration: 0.25 }}
                   className="relative w-full h-full max-w-5xl max-h-[75vh]"
                 >
-                  {/* Two-tier progressive loading: immediate cached thumbnail backdrop + sharp high-res lightbox layer */}
+                  {/* Two-tier progressive loading: immediate cached thumbnail backdrop + full-size master image */}
                   <Image
                     src={getOptimizedImageUrl(items[selectedIndex].url, IMAGE_PRESETS.thumbnail)}
                     alt=""
@@ -127,7 +139,7 @@ export default function LightboxGallery({ items = [], title = 'Project Gallery' 
                     className="object-contain filter blur-sm opacity-40 pointer-events-none"
                   />
                   <Image
-                    src={getOptimizedImageUrl(items[selectedIndex].url, IMAGE_PRESETS.lightbox)}
+                    src={items[selectedIndex].url}
                     alt={items[selectedIndex].alt || title}
                     fill
                     priority
