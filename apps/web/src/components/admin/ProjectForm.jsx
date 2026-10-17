@@ -94,6 +94,7 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(null);
   const [newAmenityInput, setNewAmenityInput] = useState('');
 
   // Tab definitions for Property Management
@@ -205,12 +206,13 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
     }));
   };
 
-  // Direct signed Cloudinary upload helper
+  // Direct signed Cloudinary upload helper (supports single cover & multiple gallery images)
   const handleDirectUpload = async (e, targetField = 'cover') => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
 
     setUploading(true);
+    setUploadProgress({ current: 0, total: files.length });
     setError('');
 
     try {
@@ -227,21 +229,22 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
 
       const { timestamp, signature, apiKey, cloudName, folder } = sigData.data;
 
-      const uploadForm = new FormData();
-      uploadForm.append('file', file);
-      uploadForm.append('api_key', apiKey);
-      uploadForm.append('timestamp', timestamp);
-      uploadForm.append('signature', signature);
-      uploadForm.append('folder', folder);
+      if (targetField === 'cover') {
+        const file = files[0];
+        const uploadForm = new FormData();
+        uploadForm.append('file', file);
+        uploadForm.append('api_key', apiKey);
+        uploadForm.append('timestamp', timestamp);
+        uploadForm.append('signature', signature);
+        uploadForm.append('folder', folder);
 
-      const cloudRes = await fetch(
-        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-        { method: 'POST', body: uploadForm }
-      );
-      const cloudData = await cloudRes.json();
+        const cloudRes = await fetch(
+          `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+          { method: 'POST', body: uploadForm }
+        );
+        const cloudData = await cloudRes.json();
 
-      if (cloudData.secure_url) {
-        if (targetField === 'cover') {
+        if (cloudData.secure_url) {
           setFormData(prev => ({
             ...prev,
             coverImage: {
@@ -252,27 +255,55 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
             }
           }));
         } else {
-          setFormData(prev => ({
-            ...prev,
-            gallery: [
-              ...prev.gallery,
-              {
-                url: cloudData.secure_url,
-                publicId: cloudData.public_id,
-                alt: file.name,
-                caption: '',
-                order: prev.gallery.length + 1
-              }
-            ]
-          }));
+          throw new Error(cloudData.error?.message || 'Cloudinary upload rejected');
         }
       } else {
-        throw new Error(cloudData.error?.message || 'Cloudinary upload rejected');
+        // Multi-image batch upload for gallery directly to Cloudinary
+        const uploadedItems = [];
+        let completed = 0;
+
+        for (const file of files) {
+          const uploadForm = new FormData();
+          uploadForm.append('file', file);
+          uploadForm.append('api_key', apiKey);
+          uploadForm.append('timestamp', timestamp);
+          uploadForm.append('signature', signature);
+          uploadForm.append('folder', folder);
+
+          const cloudRes = await fetch(
+            `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+            { method: 'POST', body: uploadForm }
+          );
+          const cloudData = await cloudRes.json();
+
+          if (cloudData.secure_url) {
+            uploadedItems.push({
+              url: cloudData.secure_url,
+              publicId: cloudData.public_id,
+              alt: file.name,
+              caption: '',
+              order: (formData.gallery?.length || 0) + uploadedItems.length + 1
+            });
+          } else {
+            console.warn(`Failed to upload ${file.name}:`, cloudData.error?.message);
+          }
+          completed++;
+          setUploadProgress({ current: completed, total: files.length });
+        }
+
+        if (uploadedItems.length > 0) {
+          setFormData(prev => ({
+            ...prev,
+            gallery: [...prev.gallery, ...uploadedItems]
+          }));
+        }
       }
     } catch (uploadErr) {
       setError(`Media upload notice: ${uploadErr.message}. You can also paste an absolute direct image URL.`);
     } finally {
       setUploading(false);
+      setUploadProgress(null);
+      e.target.value = '';
     }
   };
 
@@ -882,17 +913,25 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
 
           {/* Gallery Items Section */}
           <div className="space-y-4 pt-6 border-t border-steel-200">
-            <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-navy-900 font-display">
-                Additional Property Photographs & Floorplans
-              </h3>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-steel-200 pb-2">
+              <div>
+                <h3 className="text-base font-bold text-navy-900 font-display">
+                  Additional Property Photographs & Floorplans
+                </h3>
+                {uploading && uploadProgress && (
+                  <p className="text-xs font-mono text-industrial-orange animate-pulse mt-0.5">
+                    Uploading {uploadProgress.current} of {uploadProgress.total} images directly to Cloudinary...
+                  </p>
+                )}
+              </div>
               <div className="flex items-center gap-3">
-                <label className="inline-flex items-center gap-1 px-3 py-1.5 bg-steel-100 border border-steel-300 hover:bg-steel-200 text-navy-900 text-xs font-bold uppercase cursor-pointer">
-                  <Upload className="w-3.5 h-3.5" />
-                  <span>Upload To Gallery</span>
+                <label className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-steel-100 border border-steel-300 hover:bg-steel-200 text-navy-900 text-xs font-bold uppercase cursor-pointer transition-colors shadow-sm">
+                  <Upload className="w-3.5 h-3.5 text-industrial-orange" />
+                  <span>Upload Multiple Images</span>
                   <input
                     type="file"
                     accept="image/*"
+                    multiple
                     onChange={(e) => handleDirectUpload(e, 'gallery')}
                     className="hidden"
                   />
