@@ -35,17 +35,21 @@ export function HomeHero() {
 
       {/* 2. Engineering Blueprint Background Grid */}
       <BackgroundGrid className="absolute inset-0 z-0 h-full">
-        {/* Architectural Civil Photography Backdrop */}
-        <div className="absolute inset-0">
-          <Image
-            src="https://images.unsplash.com/photo-1541888946425-d0fbb1861593?auto=format&fit=crop&w=2000&q=85"
-            alt="Major civil engineering infrastructure viaduct and bridge construction"
-            fill
-            priority
-            className="object-cover object-center opacity-25 mix-blend-luminosity filter contrast-125"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-navy-950 via-navy-950/85 to-navy-950/40" />
-          <div className="absolute inset-0 bg-gradient-to-t from-navy-950 via-transparent to-transparent" />
+        {/* High-Impact Ambient Construction Video Backdrop */}
+        <div className="absolute inset-0 overflow-hidden">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster="https://images.unsplash.com/photo-1541888946425-d0fbb1861593?auto=format&fit=crop&w=2000&q=85"
+            className="w-full h-full object-cover object-center opacity-45 scale-105"
+          >
+            <source src="/videos/hero-video.webm" type="video/webm" />
+          </video>
+          {/* Cinematic lighting gradient overlays for contrast & legibility */}
+          <div className="absolute inset-0 bg-gradient-to-r from-navy-950 via-navy-950/80 to-navy-950/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-navy-950 via-transparent to-navy-950/40" />
         </div>
       </BackgroundGrid>
 
