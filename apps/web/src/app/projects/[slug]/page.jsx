@@ -98,6 +98,7 @@ export default async function PropertyDetailPage({ params, searchParams }) {
 
   const isDraftOrArchived = publicationStatus === 'Draft' || archiveStatus === 'Archived';
   const developerDisplay = developerName || clientName || 'Independent Developer';
+  const slug = project.slug || params.slug;
   const isDemo = Boolean(
     project.isDemo ||
     ['the-skyview-residences', 'palm-meadows-gated-community', 'aura-grand-urban-apartments', 'the-pinnacle-commercial-business-suites', 'emerald-valley-residential-enclave', 'serenity-lakeview-penthouses'].includes(slug)
