@@ -22,6 +22,7 @@ import {
   Maximize2
 } from 'lucide-react';
 import Link from 'next/link';
+import { compressImageBeforeUpload, formatBytes } from '../../lib/clientImageCompressor';
 
 const COMMON_AMENITIES = [
   '24/7 Security & CCTV',
@@ -206,13 +207,13 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
     }));
   };
 
-  // Direct signed Cloudinary upload helper (supports single cover & multiple gallery images)
+  // Direct signed Cloudinary upload helper (with browser-native image compression)
   const handleDirectUpload = async (e, targetField = 'cover') => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
 
     setUploading(true);
-    setUploadProgress({ current: 0, total: files.length });
+    setUploadProgress({ current: 0, total: files.length, status: `Preparing ${files.length} file(s)...` });
     setError('');
 
     try {
@@ -230,9 +231,21 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
       const { timestamp, signature, apiKey, cloudName, folder } = sigData.data;
 
       if (targetField === 'cover') {
-        const file = files[0];
+        const rawFile = files[0];
+        setUploadProgress({ current: 0, total: 1, status: `Compressing cover image (${formatBytes(rawFile.size)})...` });
+
+        // In-browser compression before network transfer
+        const { file: uploadFile, originalSize, compressedSize, wasCompressed, reductionPercent } =
+          await compressImageBeforeUpload(rawFile);
+
+        const statusMsg = wasCompressed
+          ? `Uploading compressed cover (${formatBytes(originalSize)} → ${formatBytes(compressedSize)}, -${reductionPercent}%)...`
+          : `Uploading cover (${formatBytes(uploadFile.size)})...`;
+
+        setUploadProgress({ current: 1, total: 1, status: statusMsg });
+
         const uploadForm = new FormData();
-        uploadForm.append('file', file);
+        uploadForm.append('file', uploadFile);
         uploadForm.append('api_key', apiKey);
         uploadForm.append('timestamp', timestamp);
         uploadForm.append('signature', signature);
@@ -251,20 +264,42 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
               ...prev.coverImage,
               url: cloudData.secure_url,
               publicId: cloudData.public_id,
-              alt: file.name
+              alt: rawFile.name
             }
           }));
         } else {
           throw new Error(cloudData.error?.message || 'Cloudinary upload rejected');
         }
       } else {
-        // Multi-image batch upload for gallery directly to Cloudinary
+        // Multi-image batch upload for gallery directly to Cloudinary with progressive compression
         const uploadedItems = [];
         let completed = 0;
 
-        for (const file of files) {
+        for (let i = 0; i < files.length; i++) {
+          const rawFile = files[i];
+
+          setUploadProgress({
+            current: i + 1,
+            total: files.length,
+            status: `Compressing image ${i + 1} of ${files.length} (${formatBytes(rawFile.size)})...`
+          });
+
+          // In-browser compression before network transfer
+          const { file: uploadFile, originalSize, compressedSize, wasCompressed, reductionPercent } =
+            await compressImageBeforeUpload(rawFile);
+
+          const statusMsg = wasCompressed
+            ? `Uploading ${i + 1}/${files.length} (${formatBytes(originalSize)} → ${formatBytes(compressedSize)}, -${reductionPercent}%)...`
+            : `Uploading ${i + 1}/${files.length} (${formatBytes(uploadFile.size)})...`;
+
+          setUploadProgress({
+            current: i + 1,
+            total: files.length,
+            status: statusMsg
+          });
+
           const uploadForm = new FormData();
-          uploadForm.append('file', file);
+          uploadForm.append('file', uploadFile);
           uploadForm.append('api_key', apiKey);
           uploadForm.append('timestamp', timestamp);
           uploadForm.append('signature', signature);
@@ -280,15 +315,14 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
             uploadedItems.push({
               url: cloudData.secure_url,
               publicId: cloudData.public_id,
-              alt: file.name,
+              alt: rawFile.name,
               caption: '',
               order: (formData.gallery?.length || 0) + uploadedItems.length + 1
             });
           } else {
-            console.warn(`Failed to upload ${file.name}:`, cloudData.error?.message);
+            console.warn(`Failed to upload ${rawFile.name}:`, cloudData.error?.message);
           }
           completed++;
-          setUploadProgress({ current: completed, total: files.length });
         }
 
         if (uploadedItems.length > 0) {
@@ -854,7 +888,11 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
           <div className="space-y-4">
             <h2 className="text-base font-bold text-navy-900 font-display border-b border-steel-200 pb-2 flex items-center justify-between">
               <span>Primary Property Cover Image</span>
-              {uploading && <span className="text-xs font-mono text-industrial-orange animate-pulse">Uploading file to Cloudinary...</span>}
+              {uploading && (
+                <span className="text-xs font-mono text-industrial-orange animate-pulse">
+                  {uploadProgress?.status || 'Uploading file to Cloudinary...'}
+                </span>
+              )}
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -920,7 +958,7 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
                 </h3>
                 {uploading && uploadProgress && (
                   <p className="text-xs font-mono text-industrial-orange animate-pulse mt-0.5">
-                    Uploading {uploadProgress.current} of {uploadProgress.total} images directly to Cloudinary...
+                    {uploadProgress.status || `Uploading ${uploadProgress.current} of ${uploadProgress.total} images...`}
                   </p>
                 )}
               </div>

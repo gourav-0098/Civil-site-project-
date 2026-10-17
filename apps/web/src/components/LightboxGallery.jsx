@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
+import { getOptimizedImageUrl, IMAGE_PRESETS } from '../lib/imageOptimizer';
 
 export default function LightboxGallery({ items = [], title = 'Project Gallery' }) {
   const [selectedIndex, setSelectedIndex] = useState(null);
@@ -57,7 +58,7 @@ export default function LightboxGallery({ items = [], title = 'Project Gallery' 
             className="group relative aspect-[4/3] bg-steel-100 overflow-hidden border border-steel-200 cursor-pointer hover:border-industrial-orange transition-all duration-200 shadow-sm"
           >
             <Image
-              src={item.url}
+              src={getOptimizedImageUrl(item.url, IMAGE_PRESETS.thumbnail)}
               alt={item.alt || `${title} image ${idx + 1}`}
               fill
               sizes="(max-width: 768px) 100vw, 33vw"
@@ -117,12 +118,20 @@ export default function LightboxGallery({ items = [], title = 'Project Gallery' 
                   transition={{ duration: 0.25 }}
                   className="relative w-full h-full max-w-5xl max-h-[75vh]"
                 >
+                  {/* Two-tier progressive loading: immediate cached thumbnail backdrop + sharp high-res lightbox layer */}
                   <Image
-                    src={items[selectedIndex].url}
+                    src={getOptimizedImageUrl(items[selectedIndex].url, IMAGE_PRESETS.thumbnail)}
+                    alt=""
+                    fill
+                    aria-hidden="true"
+                    className="object-contain filter blur-sm opacity-40 pointer-events-none"
+                  />
+                  <Image
+                    src={getOptimizedImageUrl(items[selectedIndex].url, IMAGE_PRESETS.lightbox)}
                     alt={items[selectedIndex].alt || title}
                     fill
                     priority
-                    className="object-contain"
+                    className="object-contain relative z-10 transition-opacity duration-300"
                   />
                 </motion.div>
               </AnimatePresence>

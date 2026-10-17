@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { MapPin, ArrowRight, Building, Home, Maximize2, Tag, Calendar, Layers } from 'lucide-react';
 import { GlowCard } from './ui/GlowCard';
+import { getOptimizedImageUrl, IMAGE_PRESETS } from '../lib/imageOptimizer';
 
 export default function ProjectCard({ project, featured = false }) {
   const {
@@ -35,7 +36,10 @@ export default function ProjectCard({ project, featured = false }) {
   };
 
   const statusStyle = statusConfig[constructionStatus] || statusConfig['Ongoing'] || statusConfig['Under Construction'];
-  const imageUrl = coverImage?.url?.trim() || null;
+  const rawImageUrl = coverImage?.url?.trim() || null;
+  const imageUrl = rawImageUrl
+    ? getOptimizedImageUrl(rawImageUrl, featured ? IMAGE_PRESETS.medium : IMAGE_PRESETS.thumbnail)
+    : null;
   const clientOrDev = clientName || developerName || null;
 
   const isDemo = Boolean(

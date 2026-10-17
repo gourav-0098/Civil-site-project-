@@ -24,6 +24,7 @@ import VideoPlayer from '../../../components/VideoPlayer';
 import ProjectCard from '../../../components/ProjectCard';
 import ContactForm from '../../../components/ContactForm';
 import { getProjectBySlug } from '../../../lib/api';
+import { getOptimizedImageUrl, IMAGE_PRESETS } from '../../../lib/imageOptimizer';
 
 export const revalidate = 60;
 
@@ -150,7 +151,7 @@ export default async function PropertyDetailPage({ params, searchParams }) {
         <div className="absolute inset-0 z-0">
           {coverImage?.url ? (
             <Image
-              src={coverImage.url}
+              src={getOptimizedImageUrl(coverImage.url, IMAGE_PRESETS.hero)}
               alt={coverImage?.alt || title}
               fill
               priority
@@ -243,7 +244,7 @@ export default async function PropertyDetailPage({ params, searchParams }) {
             {coverImage?.url && (
               <div className="relative aspect-[16/10] w-full bg-steel-100 border border-steel-200 overflow-hidden shadow-md">
                 <Image
-                  src={coverImage.url}
+                  src={getOptimizedImageUrl(coverImage.url, IMAGE_PRESETS.medium)}
                   alt={coverImage?.alt || title}
                   fill
                   sizes="(max-width: 1024px) 100vw, 66vw"
