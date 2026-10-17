@@ -39,8 +39,8 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
       estimatedCompletionDate: initialData?.timeline?.estimatedCompletionDate ? initialData.timeline.estimatedCompletionDate.slice(0, 10) : '',
       completionDate: initialData?.timeline?.completionDate ? initialData.timeline.completionDate.slice(0, 10) : ''
     },
-    shortDescription: initialData?.shortDescription || '',
-    fullDescription: initialData?.fullDescription || '',
+    shortDescription: initialData?.shortDescription || 'High-capacity heavy civil infrastructure project engineered for regional connectivity.',
+    fullDescription: initialData?.fullDescription || 'Disciplined engineering, structural modeling, geotechnical soil validation, and heavy civil construction delivery.',
     scopeOfWork: initialData?.scopeOfWork && initialData.scopeOfWork.length > 0
       ? initialData.scopeOfWork
       : ['Fabrication and segmental deck span erection'],
@@ -48,8 +48,8 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
       ? initialData.specifications
       : [{ label: 'Structural Concrete', value: 'M60 Grade' }],
     coverImage: {
-      url: initialData?.coverImage?.url || '',
-      alt: initialData?.coverImage?.alt || '',
+      url: initialData?.coverImage?.url || 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fit=crop&w=1600&q=80',
+      alt: initialData?.coverImage?.alt || 'Civil infrastructure engineering project',
       caption: initialData?.coverImage?.caption || '',
       publicId: initialData?.coverImage?.publicId || ''
     },
@@ -246,13 +246,19 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
 
     const payload = {
       ...formData,
+      coverImage: {
+        ...formData.coverImage,
+        url: formData.coverImage.url.trim() || 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fit=crop&w=1600&q=80',
+        alt: formData.coverImage.alt.trim() || 'Civil infrastructure engineering project'
+      },
       timeline: {
         startDate: formData.timeline.startDate || null,
         estimatedCompletionDate: formData.timeline.estimatedCompletionDate || null,
         completionDate: formData.timeline.completionDate || null
       },
-      scopeOfWork: formData.scopeOfWork.filter(s => s.trim().length > 0),
-      specifications: formData.specifications.filter(s => s.label.trim().length > 0 && s.value.trim().length > 0),
+      scopeOfWork: formData.scopeOfWork.filter(s => s && s.trim().length > 0),
+      specifications: formData.specifications.filter(s => s && s.label && s.label.trim().length > 0 && s.value && s.value.trim().length > 0),
+      gallery: formData.gallery.filter(item => item && item.url && item.url.trim().length > 0),
       seo: {
         ...formData.seo,
         keywords: keywordsArray
@@ -274,7 +280,12 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Failed to save project. Please check required fields.');
+        let errorMsg = data.error || 'Failed to save project. Please check required fields.';
+        if (Array.isArray(data.details) && data.details.length > 0) {
+          const detailStrings = data.details.map(d => `${d.field}: ${d.message}`);
+          errorMsg = `Validation failed: ${detailStrings.join(' • ')}`;
+        }
+        throw new Error(errorMsg);
       }
 
       setSuccess(`Project ${isEdit ? 'updated' : 'created'} successfully!`);
@@ -283,6 +294,9 @@ export default function ProjectForm({ initialData = null, isEdit = false }) {
       }, 1000);
     } catch (err) {
       setError(err.message);
+      if (typeof window !== 'undefined') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     } finally {
       setLoading(false);
     }

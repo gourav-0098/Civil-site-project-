@@ -143,3 +143,7 @@ export function createApp(sessionStoreOverride = null) {
 
   return app;
 }
+
+const defaultApp = createApp();
+export default defaultApp;
+

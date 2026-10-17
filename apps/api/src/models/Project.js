@@ -83,20 +83,26 @@ const projectSchema = new mongoose.Schema(
     shortDescription: {
       type: String,
       required: [true, 'Short description is required'],
-      maxlength: [400, 'Short description cannot exceed 400 characters'],
-      trim: true
+      maxlength: [1000, 'Short description cannot exceed 1000 characters'],
+      trim: true,
+      default: 'Comprehensive heavy civil infrastructure engineering and construction project delivered to global standards.'
     },
     fullDescription: {
       type: String,
       required: [true, 'Full project description is required'],
-      trim: true
+      trim: true,
+      default: 'Detailed technical documentation and engineering execution specifications for this heavy civil infrastructure asset.'
     },
     scopeOfWork: [{ type: String, trim: true }],
     specifications: [specificationSchema],
     coverImage: {
-      url: { type: String, required: [true, 'Cover image URL is required'] },
+      url: {
+        type: String,
+        required: [true, 'Cover image URL is required'],
+        default: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fit=crop&w=1600&q=80'
+      },
       publicId: { type: String, default: '' },
-      alt: { type: String, default: '' },
+      alt: { type: String, default: 'Civil infrastructure engineering project' },
       caption: { type: String, default: '' }
     },
     gallery: [galleryItemSchema],
