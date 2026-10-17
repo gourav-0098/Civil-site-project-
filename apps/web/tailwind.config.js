@@ -18,7 +18,8 @@ module.exports = {
         industrial: {
           orange: '#EA580C', // Primary industrial accent
           orangeHover: '#C2410C',
-          orangeLight: '#FFF7ED'
+          orangeLight: '#FFF7ED',
+          amber: '#F59E0B'
         },
         steel: {
           900: '#0F172A',
@@ -41,6 +42,35 @@ module.exports = {
       letterSpacing: {
         widest: '.15em',
         architectural: '.08em'
+      },
+      animation: {
+        spotlight: 'spotlight 2s ease .75s 1 forwards',
+        shimmer: 'shimmer 2s linear infinite',
+        pulseGlow: 'pulseGlow 4s ease-in-out infinite'
+      },
+      keyframes: {
+        spotlight: {
+          '0%': {
+            opacity: 0,
+            transform: 'translate(-72%, -62%) scale(0.5)'
+          },
+          '100%': {
+            opacity: 1,
+            transform: 'translate(-50%,-40%) scale(1)'
+          }
+        },
+        shimmer: {
+          from: {
+            backgroundPosition: '0 0'
+          },
+          to: {
+            backgroundPosition: '-200% 0'
+          }
+        },
+        pulseGlow: {
+          '0%, 100%': { opacity: 0.4 },
+          '50%': { opacity: 0.8 }
+        }
       }
     },
   },
